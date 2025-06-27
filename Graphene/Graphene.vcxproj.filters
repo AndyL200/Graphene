@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Window">
+      <UniqueIdentifier>{f0dc1909-7d73-4fa3-8217-edb1d80cd2b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Window\Win32Win">
+      <UniqueIdentifier>{eb4e8f06-73ab-4598-b6c6-3340668af99d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Graphene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\other_guy\pdp1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\other_guy\xsect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntryPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pchgrfy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\glfw-3.4\GLFW\include\GLFW\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\glfw-3.4\GLFW\include\GLFW\glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Windows\Window.h">
+      <Filter>Header Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Windows\WinWindow\WinWindow.h">
+      <Filter>Header Files\Window\Win32Win</Filter>
+    </ClInclude>
+    <ClInclude Include="Plots.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lists.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\argonmcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\fft.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\field.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\gather.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\heliummcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\initwin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\load.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\maxwellv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\mcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\mccdiaginit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\move.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\neonmcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\nitrogen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\oxygenmcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\padjus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\pdp1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\prest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\start.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\xsect.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Windows\WinWindow\WinWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
