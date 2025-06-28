@@ -2,6 +2,8 @@
 #define GRAPHENE_PLOTS
 
 #include "Graphene.h"
+#include "Lists.h"
+#include "Labels.h"
 
 struct structureData {
 	int n;
@@ -11,18 +13,30 @@ struct structureData {
 	SCALAR* points;
 };
 
+
+enum PlotCategory { // compiling xgmovie was throwing error for unknown LINE_PLOT; JK 2019-01-14;
+	None = 0,
+	LinePlotCategory = BIT(0),				
+	ScatterPlotCategory = BIT(1),
+	VectorPlotCategory = BIT(2),
+	SurfacePlotCategory = BIT(3),
+	Scatter3DCategory = BIT(4),
+	Irregular3DCategory = BIT(5)
+};
+
+
 class plot 
 {
 protected:
-	std::string filename;
-	LabelType label;
-	List<StructureData> structures;
+	std::vector<uint8_t>& buffer;
+	PlotDimensions dim;
+	ArrayList<structureData> structures;
 public:
 	int xloc;
 	int yloc;
 
 	virtual void updatePlot(double time) = 0;  // bring the plot up to this time
-	plot(std::string filename, int xloc, int yloc);
+	plot(std::vector<uint8_t>& buffer, int xloc, int yloc);
 	virtual ~plot() {};
 };
 
@@ -34,15 +48,28 @@ public:
 	int color;
 	SCALAR time;
 	One_D_plot_data() {};
+
+	void fixup() {
+		uint8_t* ptr = reinterpret_cast<uint8_t*>(this);
+		x = (SCALAR*)(ptr);
+		ptr += MAX_LIN * sizeof(SCALAR);
+		y = (SCALAR*)(ptr);
+		ptr += MAX_LIN * sizeof(SCALAR);
+		memcpy()
+		ptr += sizeof(int);
+		color = (int)(*ptr);
+		ptr += sizeof(int);
+		time = (SCALAR)(*ptr);
+	}
 };
 
 
 class One_D_plot : public plot {
 
 protected:
-	List< List<One_D_plot_data> > graphdata;
-	ListIter<List<One_D_plot_data> >* current;
-	List< One_D_plot_data> current_data;
+	ArrayList< ArrayList<One_D_plot_data> > graphdata;
+	//ArrayList<One_D_plot_data>* current;
+	//ArrayList< One_D_plot_data> current_data;
 public:
 	virtual void updatePlot(double time);
 	One_D_plot(char* _filename, int xloc, int yloc);
@@ -72,7 +99,7 @@ public:
 	SCALAR* x;
 	SCALAR* y;
 	SCALAR** z;
-	List< SurfacePlotData > graphdata;
+	ArrayList< SurfacePlotData > graphdata;
 	ListIter<SurfacePlotData>* current;
 	virtual void updatePlot(double time);
 	SurfacePlot(char* _filename, int xloc, int yloc);
@@ -92,7 +119,7 @@ public:
 	SCALAR* y;
 	SCALAR** z;
 	SCALAR** w;
-	List< VectorPlotData > graphdata;
+	ArrayList< VectorPlotData > graphdata;
 	ListIter<VectorPlotData>* current;
 	virtual void updatePlot(double time);
 	VectorPlot(char* _filename, int xloc, int yloc);

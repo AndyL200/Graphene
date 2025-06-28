@@ -1,0 +1,20 @@
+#pragma once
+typedef struct {
+	double          Z_Scale;
+	double          Z_Min;
+	double          Z_Max;
+	char* Z_Label;
+	int             Z_Auto_Rescale;
+	double          Y_Scale;
+	double          Y_Offset;
+	double          Y_Min;
+	double          Y_Max;
+	char* Y_Label;
+	int             Y_Auto_Rescale;
+	double          X_Scale;
+	double          X_Offset;
+	double          X_Min;
+	double          X_Max;
+	char* X_Label;
+	int             X_Auto_Rescale;
+} PlotDimensions;

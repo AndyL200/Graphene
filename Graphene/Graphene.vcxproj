@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -23,8 +23,10 @@
     <ClInclude Include="dep\glfw-3.4\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="dep\other_guy\pdp1.h" />
     <ClInclude Include="dep\other_guy\xsect.h" />
-    <ClInclude Include="Lists.h" />
-    <ClInclude Include="Plots.h" />
+    <ClInclude Include="src\grfyreadwrt.h" />
+    <ClInclude Include="src\Labels.h" />
+    <ClInclude Include="src\Lists.h" />
+    <ClInclude Include="src\Plots.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\EntryPoint.h" />
@@ -54,6 +56,7 @@
     <ClCompile Include="dep\other_guy\start.c" />
     <ClCompile Include="dep\other_guy\xsect.c" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Plots.cpp" />
     <ClCompile Include="src\Windows\WinWindow\WinWindow.cpp" />
   </ItemGroup>
   <ItemGroup>

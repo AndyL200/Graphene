@@ -54,10 +54,16 @@
     <ClInclude Include="src\Windows\WinWindow\WinWindow.h">
       <Filter>Header Files\Window\Win32Win</Filter>
     </ClInclude>
-    <ClInclude Include="Plots.h">
+    <ClInclude Include="src\Labels.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lists.h">
+    <ClInclude Include="src\Lists.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Plots.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\grfyreadwrt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -123,6 +129,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Windows\WinWindow\WinWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Plots.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
