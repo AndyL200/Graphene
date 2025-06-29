@@ -1,4 +1,5 @@
 #include "Plots.h"
+#include <xutility>
 
 plot::plot(std::vector<uint8_t>& buffer, int _xloc, int _yloc) {
 	
@@ -8,68 +9,137 @@ plot::plot(std::vector<uint8_t>& buffer, int _xloc, int _yloc) {
 	fclose(fp);
 }
 
+
+PlotDimensions ReadLabel(VectorStream& in) {
+	int type;
+	char buf[100];
+	char* labels;
+	int l;
+	PlotDimensions* label = (PlotDimensions*)malloc(sizeof(PlotDimensions));
+	SCALAR scale, min, max;
+	//Read 1st string
+	l = GHRead<int>(in);  //size
+	labels = (char*)malloc((l + 1) * sizeof(char));
+	if (l > 0) {
+		in.read(labels, l);
+		labels[l] = '\0';
+		//this could throw off the vector stream pointer
+		//make a read specifically for pointer values?
+		label->X_Label = labels;
+	}
+
+	//Read 2st string
+	l = GHRead<int>(in);  //size
+	labels = (char*)malloc((l + 1) * sizeof(char));
+	if (l > 0) {
+		in.read(labels, l);
+		labels[l] = '\0';
+		label->Y_Label = labels;
+	}
+	//Read 3st string
+	l = GHRead<int>(in);  //size
+	labels = (char*)malloc((l + 1) * sizeof(char));
+	if (l > 0) {
+		in.read(labels, l);
+		labels[l] = '\0';
+		label->Z_Label = labels;
+	}
+	// read the info on the X axis
+	scale = GHRead<SCALAR>(in);
+	label->X_Scale = 1;//scale;
+	min = GHRead<SCALAR>(in);
+	label->X_Min = min;
+	max = GHRead<SCALAR>(in);
+	label->X_Max = max;
+	label->X_Auto_Rescale = GHRead<SCALAR>(in);
+
+
+	// read the info on the Y axis
+	scale = GHRead<SCALAR>(in);
+	label->Y_Scale = 1;//scale;
+	min = GHRead<SCALAR>(in);
+	label->Y_Min = min;
+	max = GHRead<SCALAR>(in);
+	label->Y_Max = max;
+	label->Y_Auto_Rescale = GHRead<SCALAR>(in);
+
+
+	// read the info on the Z axis
+	scale = GHRead<SCALAR>(in);
+	label->Z_Scale = 1;//scale;
+	min = GHRead<SCALAR>(in);
+	label->Z_Min = min;
+	max = GHRead<SCALAR>(in);
+	label->Z_Max = max;
+	label->Z_Auto_Rescale = GHRead<SCALAR>(in);
+
+	return *label;
+}
+
+
 One_D_plot::One_D_plot(VectorStream& in, int xloc, int yloc) : plot(buffer, xloc, yloc) {
-	int i, j, count, type;
+	int type;
 	ArrayList<ArrayList<One_D_plot_data> > tmp;
+	const int count = GHRead<int>(in);
+	in.clear();
+	in.seekg(0, std::ios::beg);
 	//  for(i=1;openFile(&fp,filename,i)!=-1;i++) {
-	for (i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 		ArrayList<One_D_plot_data>* in_data = new ArrayList<One_D_plot_data>;
+		SCALAR the_time;
+		type = GHRead<int>(in);
+		dim = ReadLabel(in);
+		the_time = GHRead<SCALAR>(in);
 		//issue ArrayList cannot be read
 		do {
-			One_D_plot_data dat = GHRead<One_D_plot_data>(in);
+			One_D_plot_data* dat = new One_D_plot_data();
+			dat->n = GHRead<int>(in);
+			dat->color = GHRead<int>(in);
 			int Skip = 1;
 			
-			if (dat.n == -1) {  // the exit condition 
-				tmp.add(*in_data);  //add this list of data to the graph list
+			if (dat->n == -1) {  // the exit condition 
+				tmp.add(in_data);  //add this list of data to the graph list
 				break;  // go to the next file
 			}
-			if (i == 1) { // have to build a current_data list
-				One_D_plot_data dat2 = GHRead<One_D_plot_data>(in);
-				dat2->time = the_time;
-				dat2->x = (SCALAR*)calloc(MAX_LIN, sizeof(SCALAR));
-				dat2->y = (SCALAR*)calloc(MAX_LIN, sizeof(SCALAR));
-				dat2->color = dat->color;
-				current_data.add(dat2);
-			}
-			dat->time = the_time;
 
 			if (dat->n > MAX_LIN) {
 				// we need to contract the dataset to fit into our
 				// memory buffer.  We also must read the entire dataset.
 				// what we do is stick dat->n/MAX_LIN items directly
 				// into the same array location, the last one wins.
-				static int warnflag = 0;
 				Skip = dat->n / MAX_LIN + 1;
 
 				if (Skip < 2) Skip = 2;
 				//		  printf("\n dat->n %d, Skip %d ",dat->n, Skip);
-				if (!warnflag) {
-					warnflag = 1;
 					printf("Warning, some datasets are too large.  Threading them. (%d)\n", Skip);
-				}
 			}
 
 			dat->x = (SCALAR*)calloc(max(1, (dat->n + Skip) / Skip), sizeof(SCALAR));
 			dat->y = (SCALAR*)calloc(max(1, (dat->n + Skip) / Skip), sizeof(SCALAR));
+			int idx = 0;
+			for (int j = 0; j < dat->n; j++) {
+				if (j % Skip != 0)
+					continue;
+				SCALAR xval = GHRead<SCALAR>(in);
+				SCALAR yval = GHRead<SCALAR>(in);
+				dat->x[idx] = xval;
+				dat->y[idx] = yval;
+				++idx;
 
-			for (j = 0; j < dat->n; j++) {
-				XGRead(dat->x + j / Skip, sizeof(SCALAR), 1, fp, SCALAR_CHAR);
-				XGRead(dat->y + j / Skip, sizeof(SCALAR), 1, fp, SCALAR_CHAR);
 			}
-			dat->n = dat->n / Skip;
+			dat->n = idx;
 			in_data->add(dat);
-		} while (!feof(fp));  // actually a dummy, reading should stop earlier
+		} while (in.eof());  // actually a dummy, reading should stop earlier
 	}
-	fclose(fp);
 	// reverse the list
 	graphdata = tmp;
 
 }
 
 void One_D_plot::updatePlot(double time) {
-	if (time == minTime) current->restart();
+	//if (time == minTime) current->restart();
 
-	List<One_D_plot_data>* thisdata = current->current();
+	ArrayList<One_D_plot_data>* thisdata = current;
 	while (!current->Done() && current->current()->head->data->time <= time)
 	{
 		thisdata = current->current();
@@ -92,9 +162,9 @@ void One_D_plot::updatePlot(double time) {
 
 
 ScatterPlot::ScatterPlot(char* filename, int xloc, int yloc) :One_D_plot(filename, xloc, yloc) {
-	XGSet2D("linlin", label->X_Label, label->Y_Label, "open", xloc, yloc, label->X_Scale,
-		label->Y_Scale, label->X_Auto_Rescale, label->Y_Auto_Rescale,
-		label->X_Min, label->X_Max, label->Y_Min, label->Y_Max);
+	XGSet2D("linlin", dim->X_Label, dim->Y_Label, "open", xloc, yloc, dim->X_Scale,
+		dim->Y_Scale, dim->X_Auto_Rescale, dim->Y_Auto_Rescale,
+		dim->X_Min, dim->X_Max, dim->Y_Min, dim->Y_Max);
 	ListIter<One_D_plot_data> walk(current_data);
 	for (walk.restart(); !walk.Done(); walk++)
 		XGScat2D(walk.current()->x, walk.current()->y, &(walk.current()->n), walk.current()->color);
@@ -106,9 +176,9 @@ ScatterPlot::ScatterPlot(char* filename, int xloc, int yloc) :One_D_plot(filenam
 }
 
 LinePlot::LinePlot(char* filename, int xloc, int yloc) :One_D_plot(filename, xloc, yloc) {
-	XGSet2D("linlin", label->X_Label, label->Y_Label, "open", xloc, yloc, label->X_Scale,
-		label->Y_Scale, label->X_Auto_Rescale, label->Y_Auto_Rescale,
-		label->X_Min, label->X_Max, label->Y_Min, label->Y_Max);
+	XGSet2D("linlin", dim->X_Label, dim->Y_Label, "open", xloc, yloc, dim->X_Scale,
+		dim->Y_Scale, dim->X_Auto_Rescale, dim->Y_Auto_Rescale,
+		dim->X_Min, dim->X_Max, dim->Y_Min, dim->Y_Max);
 	ListIter<One_D_plot_data> walk(current_data);
 	for (walk.restart(); !walk.Done(); walk++)
 		XGCurve(walk.current()->x, walk.current()->y, &(walk.current()->n), walk.current()->color);
@@ -165,10 +235,10 @@ SurfacePlot::SurfacePlot(char* filename, int xloc, int yloc) : plot(filename, xl
 
 	graphdata = tmp;  //this will reverse tmp
 	current = new ListIter<SurfacePlotData>(graphdata);
-	XGSet3D("linlinlin", label->X_Label, label->Y_Label, label->Z_Label, 45.0, 225.0,
-		"open", xloc, yloc, label->X_Scale, label->Y_Scale, label->Z_Scale,
-		label->X_Auto_Rescale, label->Y_Auto_Rescale, label->Z_Auto_Rescale,
-		label->X_Min, label->X_Max, label->Y_Min, label->Y_Max, label->Z_Min, label->Z_Max);
+	XGSet3D("linlinlin", dim->X_Label, dim->Y_Label, dim->Z_Label, 45.0, 225.0,
+		"open", xloc, yloc, dim->X_Scale, dim->Y_Scale, dim->Z_Scale,
+		dim->X_Auto_Rescale, dim->Y_Auto_Rescale, dim->Z_Auto_Rescale,
+		dim->X_Min, dim->X_Max, dim->Y_Min, dim->Y_Max, dim->Z_Min, dim->Z_Max);
 	XGSurf(x, y, z, &m, &n, 1);
 
 }

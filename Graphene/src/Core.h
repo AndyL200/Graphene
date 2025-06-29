@@ -24,7 +24,7 @@ static ENDIAN getGlobalEndianess()
 	return (*test == (char)1) ? LITTLE : BIG;
 }
 
-#define BIT(x) (1 << (x));
+#define BIT(x) 1 << x
 
 
 #define SCALAR double

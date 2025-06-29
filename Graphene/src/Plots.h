@@ -5,6 +5,8 @@
 #include "Lists.h"
 #include "Labels.h"
 
+static int MAX_LIN = 12000;
+
 struct structureData {
 	int n;
 	int fillFlag;
@@ -48,19 +50,6 @@ public:
 	int color;
 	SCALAR time;
 	One_D_plot_data() {};
-
-	void fixup() {
-		uint8_t* ptr = reinterpret_cast<uint8_t*>(this);
-		x = (SCALAR*)(ptr);
-		ptr += MAX_LIN * sizeof(SCALAR);
-		y = (SCALAR*)(ptr);
-		ptr += MAX_LIN * sizeof(SCALAR);
-		memcpy()
-		ptr += sizeof(int);
-		color = (int)(*ptr);
-		ptr += sizeof(int);
-		time = (SCALAR)(*ptr);
-	}
 };
 
 
@@ -68,21 +57,21 @@ class One_D_plot : public plot {
 
 protected:
 	ArrayList< ArrayList<One_D_plot_data> > graphdata;
-	//ArrayList<One_D_plot_data>* current;
+	ArrayList<One_D_plot_data>* current;
 	//ArrayList< One_D_plot_data> current_data;
 public:
 	virtual void updatePlot(double time);
-	One_D_plot(char* _filename, int xloc, int yloc);
+	One_D_plot(VectorStream& in, int xloc, int yloc);
 };
 
 class ScatterPlot : public One_D_plot {
 public:
-	ScatterPlot(char* _filename, int xloc, int yloc);
+	ScatterPlot(VectorStream& in, int xloc, int yloc);
 };
 
 class LinePlot : public One_D_plot {
 public:
-	LinePlot(char* _filename, int xloc, int yloc);
+	LinePlot(VectorStream& in, int xloc, int yloc);
 };
 
 
