@@ -77,7 +77,7 @@ PlotDimensions ReadLabel(VectorStream& in) {
 }
 
 
-One_D_plot::One_D_plot(VectorStream& in, int xloc, int yloc) : plot(buffer, xloc, yloc) {
+One_D_plot::One_D_plot(VectorStream& in, int xloc, int yloc) : plot(in, xloc, yloc) {
 	int type;
 	ArrayList<ArrayList<One_D_plot_data> > tmp;
 	const int count = GHRead<int>(in);
@@ -161,7 +161,7 @@ void One_D_plot::updatePlot(double time) {
 
 
 
-ScatterPlot::ScatterPlot(char* filename, int xloc, int yloc) :One_D_plot(filename, xloc, yloc) {
+ScatterPlot::ScatterPlot(VectorStream& in, int xloc, int yloc) :One_D_plot(filename, xloc, yloc) {
 	XGSet2D("linlin", dim->X_Label, dim->Y_Label, "open", xloc, yloc, dim->X_Scale,
 		dim->Y_Scale, dim->X_Auto_Rescale, dim->Y_Auto_Rescale,
 		dim->X_Min, dim->X_Max, dim->Y_Min, dim->Y_Max);
@@ -175,7 +175,7 @@ ScatterPlot::ScatterPlot(char* filename, int xloc, int yloc) :One_D_plot(filenam
 			walk2.current()->fillColor, walk2.current()->points);
 }
 
-LinePlot::LinePlot(char* filename, int xloc, int yloc) :One_D_plot(filename, xloc, yloc) {
+LinePlot::LinePlot(VectorStream& in, int xloc, int yloc) :One_D_plot(filename, xloc, yloc) {
 	XGSet2D("linlin", dim->X_Label, dim->Y_Label, "open", xloc, yloc, dim->X_Scale,
 		dim->Y_Scale, dim->X_Auto_Rescale, dim->Y_Auto_Rescale,
 		dim->X_Min, dim->X_Max, dim->Y_Min, dim->Y_Max);
@@ -189,7 +189,7 @@ LinePlot::LinePlot(char* filename, int xloc, int yloc) :One_D_plot(filename, xlo
 			walk2.current()->fillColor, walk2.current()->points);
 }
 
-SurfacePlot::SurfacePlot(char* filename, int xloc, int yloc) : plot(filename, xloc, yloc) {
+SurfacePlot::SurfacePlot(VectorStream& in), int xloc, int yloc) : plot(filename, xloc, yloc) {
 	FILE* fp;
 	SCALAR the_time;
 	List<SurfacePlotData> tmp;
@@ -260,7 +260,7 @@ void SurfacePlot::updatePlot(double time) {
 
 
 
-VectorPlot::VectorPlot(char* filename, int xloc, int yloc) : plot(filename, xloc, yloc) {
+VectorPlot::VectorPlot(VectorStream& in, int xloc, int yloc) : plot(filename, xloc, yloc) {
 	FILE* fp;
 	SCALAR the_time;
 	List<VectorPlotData> tmp;
@@ -337,69 +337,6 @@ void VectorPlot::updatePlot(double time) {
 			memcpy(z[j], thisdata->z[j], n * sizeof(SCALAR));
 			memcpy(w[j], thisdata->w[j], n * sizeof(SCALAR));
 		}
-}
-
-List<plot>* thePlots;
-
-int main(int argc, char** argv) {
-	FILE* inputfile;
-	FILE* tmp;
-	thePlots = new List<plot>;
-	char line[512];
-	char filename[512];
-	char lastline[512];
-	int xloc, yloc;
-	XGInit(argc, argv, &theTime);
-	if ((inputfile = fopen(theInputFile, "r")) == NULL) {
-		fprintf(stderr, "Cannot open inputfile.  Exiting.");
-		exit(1);
-	}
-	theTime = 0;
-	maxTime = 0;
-	minTime = 1e9;
-	fgets(line, 511, inputfile);
-#ifdef XG_SCALAR_DOUBLE
-	sscanf(line, "%lf %d", &thetimestep, &MAX_LIN);
-#else
-	sscanf(line, "%f %d", &thetimestep, &MAX_LIN);
-#endif
-	if (MAX_LIN <= 0) MAX_LIN = 12000;
-
-	while (!feof(inputfile)) {
-		fgets(line, 511, inputfile);
-		sscanf(line, "%s %d %d", filename, &xloc, &yloc);
-		//	 sscanf(line,"%d %d",&xloc,&yloc);
-		xloc = max(xloc, 1); xloc = min(700, xloc);
-		yloc = max(yloc, 1); yloc = min(700, yloc);
-		if (!strcmp(filename, "END")) break;
-		switch (openFile(&tmp, filename, 0))
-		{
-		case LINE_PLOT:
-			thePlots->add(new LinePlot(filename, xloc, yloc));
-			break;
-		case SCATTER_PLOT:
-			thePlots->add(new ScatterPlot(filename, xloc, yloc));
-			break;
-		case SURFACE_PLOT:
-			thePlots->add(new SurfacePlot(filename, xloc, yloc));
-			break;
-		case VECTOR_PLOT:
-			thePlots->add(new VectorPlot(filename, xloc, yloc));
-			break;
-		default:
-			fprintf(stderr, "Unsupported plot type in file %s\n", filename);
-		}
-		fclose(tmp);
-	}
-	theTime = minTime;
-
-	ListIter<plot> walk(*thePlots);
-	for (walk.restart(); !walk.Done(); walk++) {
-		walk.current()->updatePlot(theTime);
-	}
-	printf("\nStart time: %g  End time: %g\n", minTime, maxTime);
-	XGStart();
-	return 0;
 }
 
 void XGMainLoop() {

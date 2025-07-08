@@ -23,15 +23,19 @@
     <ClInclude Include="dep\glfw-3.4\GLFW\include\GLFW\glfw3native.h" />
     <ClInclude Include="dep\other_guy\pdp1.h" />
     <ClInclude Include="dep\other_guy\xsect.h" />
+    <ClInclude Include="src\EBO.h" />
     <ClInclude Include="src\grfyreadwrt.h" />
     <ClInclude Include="src\Labels.h" />
     <ClInclude Include="src\Lists.h" />
+    <ClInclude Include="src\Module.h" />
     <ClInclude Include="src\Plots.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\EntryPoint.h" />
     <ClInclude Include="src\Graphene.h" />
     <ClInclude Include="src\pchgrfy.h" />
+    <ClInclude Include="src\VAO.h" />
+    <ClInclude Include="src\VBO.h" />
     <ClInclude Include="src\Windows\Window.h" />
     <ClInclude Include="src\Windows\WinWindow\WinWindow.h" />
   </ItemGroup>
@@ -56,7 +60,12 @@
     <ClCompile Include="dep\other_guy\start.c" />
     <ClCompile Include="dep\other_guy\xsect.c" />
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\EBO.cpp" />
     <ClCompile Include="src\Plots.cpp" />
+    <ClCompile Include="src\VAO.cpp" />
+    <ClCompile Include="src\VBO.cpp" />
+    <ClCompile Include="src\Windows\THREEDWindow.cpp" />
+    <ClCompile Include="src\Windows\TWODWindow.cpp" />
     <ClCompile Include="src\Windows\WinWindow\WinWindow.cpp" />
   </ItemGroup>
   <ItemGroup>

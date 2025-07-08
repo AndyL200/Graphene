@@ -17,4 +17,4 @@ typedef struct {
 	double          X_Max;
 	char* X_Label;
 	int             X_Auto_Rescale;
-} PlotDimensions;
+} PlotDimensions, Dimensions;

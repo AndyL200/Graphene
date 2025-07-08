@@ -15,8 +15,23 @@ struct structureData {
 	SCALAR* points;
 };
 
+#define    LIN                              0
+#define    LOG                              1
+#define    LIN_LIN                          0
+#define    LIN_LOG							0b01
+#define    LOG_LOG							0b11
+#define    LOG_LIN                          0b10
+#define    LIN_LIN_LIN                      0b000
+#define    LIN_LIN_LOG                      0b001
+#define    LIN_LOG_LIN                      0b010
+#define    LIN_LOG_LOG                      0b011
+#define    LOG_LIN_LIN                      0b100
+#define    LOG_LIN_LOG                      0b101
+#define    LOG_LOG_LIN						0b110
+#define    LOG_LOG_LOG						0b111
+#define    VEC_VEC							8
 
-enum PlotCategory { // compiling xgmovie was throwing error for unknown LINE_PLOT; JK 2019-01-14;
+static enum PlotCategory { // compiling xgmovie was throwing error for unknown LINE_PLOT; JK 2019-01-14;
 	None = 0,
 	LinePlotCategory = BIT(0),				
 	ScatterPlotCategory = BIT(1),
@@ -27,10 +42,13 @@ enum PlotCategory { // compiling xgmovie was throwing error for unknown LINE_PLO
 };
 
 
+
+
+
 class plot 
 {
 protected:
-	std::vector<uint8_t>& buffer;
+	VectorStream& buffer;
 	PlotDimensions dim;
 	ArrayList<structureData> structures;
 public:
@@ -38,8 +56,12 @@ public:
 	int yloc;
 
 	virtual void updatePlot(double time) = 0;  // bring the plot up to this time
-	plot(std::vector<uint8_t>& buffer, int xloc, int yloc);
+	plot(VectorStream& buffer, int xloc, int yloc);
 	virtual ~plot() {};
+	virtual ArrayList<structureData> getStructures()
+	{
+		return structures;
+	};
 };
 
 struct One_D_plot_data {
@@ -89,9 +111,9 @@ public:
 	SCALAR* y;
 	SCALAR** z;
 	ArrayList< SurfacePlotData > graphdata;
-	ListIter<SurfacePlotData>* current;
+	//ListIter<SurfacePlotData>* current;
 	virtual void updatePlot(double time);
-	SurfacePlot(char* _filename, int xloc, int yloc);
+	SurfacePlot(VectorStream& in, int xloc, int yloc);
 };
 
 class VectorPlotData {
@@ -109,9 +131,9 @@ public:
 	SCALAR** z;
 	SCALAR** w;
 	ArrayList< VectorPlotData > graphdata;
-	ListIter<VectorPlotData>* current;
+	//ListIter<VectorPlotData>* current;
 	virtual void updatePlot(double time);
-	VectorPlot(char* _filename, int xloc, int yloc);
+	VectorPlot(VectorStream& in, int xloc, int yloc);
 };
 
 

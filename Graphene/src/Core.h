@@ -26,6 +26,20 @@ static ENDIAN getGlobalEndianess()
 
 #define BIT(x) 1 << x
 
+enum inputType
+{
+	LINE_PLOT,				// compiling xgmovie was throwing error for unknown LINE_PLOT; JK 2019-01-14; 
+	SCATTER_PLOT, 
+	VECTOR_PLOT, 
+	SURFACE_PLOT, 
+	SCATTER3D,
+	IRREGULAR3D
+};
+
+enum dim {
+	TWOD,
+	THREED
+};
 
 #define SCALAR double
 #define SCALAR_CHAR "double"

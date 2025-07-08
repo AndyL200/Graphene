@@ -1,14 +1,35 @@
 #pragma once
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include "Graphene.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
 
 namespace Graphene {
+
+	enum WindowType : uint16_t {
+		WINDOW2D = BIT(0),
+		WINDOW3D = BIT(1),
+		WINDOW_PLOT = BIT(2),
+		WINDOW_ONE_D_PLOT = BIT(3),
+		WINDOW_SCATTER_PLOT = BIT(4),
+		WINDOW_VECTOR_PLOT = BIT(5),
+		WINDOW_FREE = BIT(6)
+	};
+
+
 	struct WindowProps
 	{
 		std::string Title;
 		unsigned int Width;
 		unsigned int Height;
-
+		WindowProps operator=(const WindowProps& w) {
+			this->Title = w.Title;
+			this->Width = w.Width;
+			this->Height = w.Height;
+			return *this;
+		}
 		WindowProps(const std::string& title = "Grapene Graphics", unsigned int width = 1280, unsigned int height = 720) : Title(title), Width(width), Height(height)
 		{
 
@@ -16,22 +37,86 @@ namespace Graphene {
 
 	};
 
+	static GLFWwindow* CreateWindow(const WindowProps& props = WindowProps(), const int type)
+	{
+		if (type & WINDOW2D) {
+			TWODWindow window(props, type);
+			return window.Create();
+		}
+		else if (type & WINDOW3D) {
+			THREEDWindow window(props, type);
+			return window.Create();
+		}
+		else {
+			return nullptr;
+		}
+	}
+
+
 	class Graphene_API Window {
 	public:
-		using EventCallbackFn = std::function<void(Event&)>;
+		//using EventCallbackFn = std::function<void(Event&)>;
+
+		Window(WindowProps& props) {
+			this->props = props;
+		}
 
 		virtual ~Window() {}
 
+		void plotInit() {}
+
+		virtual unsigned int GetWidth() = 0;
+		virtual unsigned int GetHeight() = 0;
+		virtual const char* GetTitle() = 0;
 		virtual void OnUpdate() = 0;
 
-		virtual unsigned int GetWidth() const = 0;
-		virtual unsigned int GetHeight() const = 0;
+		static GLFWwindow* Create() {};
 
-		virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
-		virtual void SetVSync(bool enabled) = 0;
-		virtual bool IsVSync() const = 0;
-
-		static Window* Create(const WindowProps& props = WindowProps());
+	protected:
+		WindowProps props;
 	};
 
+	class Graphene_API TWODWindow : public Window {
+	public:
+		TWODWindow(WindowProps props, int type) : Window(props);
+
+		GLFWwindow* Create();
+
+		//theory, inline may help keep the context defined in Application
+		void inline plotInit(GLFWwindow* window, int type = (WINDOW_PLOT | WINDOW2D));
+
+		void freeInit(GLFWwindow* window, int type = (WINDOW_FREE | WINDOW2D));
+		void SetVertices(vector<float>& v);
+
+		GLfloat* GetVertices();
+
+		unsigned int GetWidth() override;
+		unsigned int GetHeight() override;
+		const char* GetTitle() override;
+
+		void OnUpdate() override;
+
+		int type;
+		GLfloat* vertices;
+	};
+
+
+
+	class Graphene_API THREEDWindow : public Window {
+	public:
+		THREEDWindow(WindowProps props, int type) : Window(props);
+		unsigned int GetWidth() override;
+		unsigned int GetHeight() override;
+		const char* GetTitle() override;
+		GLFWwindow* Create();
+
+		void plotInit(GLFWwindow* window, int type = (WINDOW_PLOT | WINDOW2D));
+		
+
+		void freeInit(GLFWwindow* window, int type = (WINDOW_FREE | WINDOW2D));
+
+		void OnUpdate() override;
+	};
 }
+
+

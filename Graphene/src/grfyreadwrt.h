@@ -3,7 +3,8 @@
 
 #include <memory>;
 #include <vector>;
-#include <cstdint>
+#include <cstdint>;
+#include "Core.h";
 using std::vector;
 
 
@@ -54,11 +55,49 @@ T GHRead(VectorStream& in)
 	return obj;
 }
 
-int GHWrite()
-{
 
+int GHWrite(VectorStream& out, FILE* in)
+{
+	
+}
+//to read in bytes
+VectorStream file_to_buffer(FILE* fp, size_t to_read, bool locator_change)
+{
+	vector<char> v(to_read);
+	if (to_read == 0)
+	{
+		fseek(fp, 0, SEEK_END);
+		long size = ftell(fp);
+		rewind(fp);
+		fread(v.data(), sizeof(char), size, fp);
+	}
+	else {
+		fread(v.data(), sizeof(char), to_read, fp);
+	}
+
+	if (!locator_change)
+	{
+		rewind(fp);
+	}
+	return VectorStream(v);
 }
 
+inputType openFile(FILE** fp, char* filename, int index) {
+	char buf[100];
+	//why is index even needed?
+	if (index == 0 || index == 1) {
+		sprintf(buf, "%s", filename);
+		if ((*fp = fopen(buf, "r")) == NULL) {
+			//sprintf(buf, "%s_%d", filename, index);
+			//if ((*fp = fopen(buf, "r")) == NULL) {
+				//fprintf(stderr, "Error, cannot find any file of the form %s\n", filename);
+			exit(1);
+			}
+		}
+		VectorStream sm = file_to_buffer(*fp, 1, true);
+		inputType type = (inputType)GHRead<int>(sm);
+		return type;
+	}
 	
 
 #endif
