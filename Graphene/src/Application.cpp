@@ -22,7 +22,42 @@ namespace Graphene {
 		glfwPollEvents();
 	}
 
-	bool Application::init(int argc, char* argv[]) const {
+	void Application::GHStart() {
+		main = glfwCreateWindow(1280, 720, "App", NULL, NULL);
+
+		//top rect
+
+		GLfloat vertices[] =
+		{
+			//	Coordinates	//	Colors	//	Normals
+			1.0f, 1.0f, 0.0f,  graphene_grey, 0.0f, 0.0f, 0.0f,
+			1.0f, 0.9f, 0.0f,  graphene_grey, 0.0f, 0.0f, 0.0f,
+			0.9f, 1.0f, 0.0f,  graphene_grey, 0.0f, 0.0f, 0.0f,
+			0.9f, 0.9f, 0.0f,  graphene_grey, 0.0f, 0.0f, 0.0f
+
+		};
+		GLuint indices[] =
+		{
+			0, 1, 2, 3
+		};
+		VAO VAO1;
+		VAO1.Bind();
+
+		VBO VBO1(vertices, sizeof(vertices));
+		EBO EBO1(indices, sizeof(indices));
+
+		VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 9 * sizeof(float), (void*)0);
+		VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 9 * sizeof(float), (void*)3);
+		VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 9 * sizeof(float), (void*)6);
+
+		VAO1.Unbind();
+		VBO1.Unbind();
+		EBO1.Unbind();
+
+
+	}
+
+	bool Application::init(int argc = 0, char* argv[] = nullptr) const {
 		if (!glfwInit()) {
 			std::cout << "INIT ERROR";
 			return false;
@@ -39,7 +74,8 @@ namespace Graphene {
 		int width = Win_Title->GetWidth();
 		int height = Win_Title->GetHeight();
 
-		main = glfwCreateWindow(width, height, Win_Title->GetTitle(), NULL, NULL);
+		//maybe just resize/restructure main window???
+		//main = glfwCreateWindow(width, height, Win_Title->GetTitle(), NULL, NULL);
 
 		glfwMakeContextCurrent(main);
 		Win_Title->plotInit(main, WinType);
@@ -95,6 +131,8 @@ namespace Graphene {
 
 
 	Module Application::GHModCreatePlot(const char* theInputFile) {
+
+		//Search module directory for this file first
 	
 		FILE* inputfile;
 		FILE* tmp;
@@ -121,8 +159,8 @@ namespace Graphene {
 #endif
 		if (MAX_LIN <= 0) MAX_LIN = 12000;
 
-		while (!feof(inputfile)) {
-			fgets(line, 511, inputfile);
+		while (fgets(line, 511, inputfile)) {
+			
 			sscanf(line, "%s %d %d", filename, &xloc, &yloc);
 			//	 sscanf(line,"%d %d",&xloc,&yloc);
 			// 
@@ -143,21 +181,21 @@ namespace Graphene {
 				}
 				break;
 			case SCATTER_PLOT:
-				ScatterPlot curPlot(inV, xloc, yloc));
+				ScatterPlot curPlot(inV, xloc, yloc);
 				ArrayList<structureData> temp = curPlot.getStructures();
 				for (int i = 0; i < temp.nItems; i++) {
 					v.add(&plot_structure_to_vertices(temp[i], TWOD));
 				}
 				break;
 			case SURFACE_PLOT:
-				SurfacePlot curPlot(inV, xloc, yloc));
+				SurfacePlot curPlot(inV, xloc, yloc);
 				ArrayList<structureData> temp = curPlot.getStructures();
 				for (int i = 0; i < temp.nItems; i++) {
 					v.add(&plot_structure_to_vertices(temp[i], TWOD));
 				}
 				break;
 			case VECTOR_PLOT:
-				VectorPlot curPlot(inV, xloc, yloc));
+				VectorPlot curPlot(inV, xloc, yloc);
 				ArrayList<structureData> temp = curPlot.getStructures();
 				for (int i = 0; i < temp.nItems; i++) {
 					v.add(&plot_structure_to_vertices(temp[i], TWOD));
@@ -169,7 +207,7 @@ namespace Graphene {
 			fclose(tmp);
 		}
 		//create file using filename
-		Module m(, v);
+		Module m(*theInputFile + ".mod", v);
 		return m;
 	};
 	void Application::GHModLoadSetup(const char* Title, uint32_t WinType, Dimensions* label_ptr, uint16_t PlotType)

@@ -71,8 +71,9 @@ namespace Graphene {
 	class Module
 	{
 	public:
-		Module(FILE* filename, ArrayList<ArrayList<verts>> v);
+		Module(const char* name, ArrayList<ArrayList<verts>> v);
 		
+		void writeToFile();
 		ArrayList<ArrayList<verts>> structures;
 	};
 

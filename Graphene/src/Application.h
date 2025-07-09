@@ -9,7 +9,11 @@
 
 namespace Graphene {
 
-	
+	enum GrapheneColorDefaults : GL_RGBA
+	{
+		GrapheneGrey = {0.1f, 0.5f, 0.9f, 1.0f},
+
+	};
 
 
 	class Application {
@@ -34,6 +38,8 @@ namespace Graphene {
 		
 		void GHModCreate();
 		void GHModLoadSetup(const char* Title, uint32_t WinType, Dimensions* label_ptr, uint16_t PlotType);
+
+		void GHStart();
 
 		private:
 			bool is_running;

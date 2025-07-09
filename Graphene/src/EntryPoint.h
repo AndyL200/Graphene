@@ -1,6 +1,11 @@
 #pragma once
 #include "Graphene.h"
+#include "Application.h"
 
-int main() {
+namespace Graphene {
+	int main() {
+		Application app();
+
+	}
 
 }
