@@ -1,6 +1,12 @@
+
+
 #ifndef GRAPHENE_CORE
 #define GRAPHENE_CORE
 
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #ifdef _WIN32
 	#ifdef BUILD_DLL
@@ -40,6 +46,8 @@ enum dim {
 	TWOD,
 	THREED
 };
+
+
 
 #define SCALAR double
 #define SCALAR_CHAR "double"

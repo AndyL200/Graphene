@@ -1,25 +1,41 @@
 #ifndef GRAPHENE_READING
+
+
+
 #define GRAPHENE_READING
 
-#include <memory>;
-#include <vector>;
-#include <cstdint>;
-#include "Core.h";
-using std::vector;
+#include <streambuf>
+#include <vector>
+#include <iostream>
 
 
 class VectorStreamBuf : public std::streambuf {
 public:
-	VectorStreamBuf(vector<char>& v) { 
+	VectorStreamBuf(std::vector<char>& v) { 
 		char* begin = v.data();  
 		size_t size = v.size();
-		setg(begin, begin, begin + size);
-		setp(begin, begin + size);
+		setbuf(begin, size);
+	}
+	VectorStreamBuf() : std::streambuf() {}
+
+	std::streambuf* setbuf(char* s, std::streamsize n) override {
+		setg(s, s, s + n);
+		setp(s, s + n);
+		return this;
 	}
 };
 class VectorStream : public std::iostream {
 public:
-	VectorStream(vector<char>& v) : std::iostream(&vbuf), vbuf(v) {};
+
+	VectorStream(std::vector<char>& v) : vbuf(v), std::iostream(&vbuf) {}
+
+	VectorStream() : std::iostream(nullptr) {}
+
+	VectorStreamBuf getVBuf()
+	{
+		return vbuf;
+	}
+
 private:
 	VectorStreamBuf vbuf;
 };
@@ -37,33 +53,26 @@ T GHRead(VectorStream& in)
 {
 	T obj;
 	T* ptr = &obj;
-	VectorStreamBuf* buffer = in.rdbuf();
 	size_t size = sizeof(T);
-	if (size <= 0) {
-		return -1;
+	if (size <= sizeof((void*)0)) {
+		return (T)0;
 	}
 
-	if (buffer->in_avail() < size)
-		return 1;
+	if (in.rdbuf()->in_avail() < size)
+		return (T)0;
 
-	ptr = malloc(size);
+	ptr = reinterpret_cast<T*>(malloc(size));
 	if (!ptr)
-		return 1;
+		return (T)0;
 
-	memcpy(ptr, buffer->gptr(), size);
-	buffer->gbump(size);
-	return obj;
+	in.read(ptr, size);
+	return *ptr;
 }
 
-
-int GHWrite(VectorStream& out, FILE* in)
-{
-	
-}
 //to read in bytes
-VectorStream file_to_buffer(FILE* fp, size_t to_read, bool locator_change)
+std::vector<char> file_to_buffer(FILE* fp, size_t to_read, bool locator_change)
 {
-	vector<char> v(to_read);
+	std::vector<char> v(to_read);
 	if (to_read == 0)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -79,25 +88,28 @@ VectorStream file_to_buffer(FILE* fp, size_t to_read, bool locator_change)
 	{
 		rewind(fp);
 	}
-	return VectorStream(v);
+	return v;
 }
 
-inputType openFile(FILE** fp, char* filename, int index) {
+inputType openFile(FILE** fp, char* filename, int index)
+{
 	char buf[100];
 	//why is index even needed?
 	if (index == 0 || index == 1) {
-		sprintf(buf, "%s", filename);
-		if ((*fp = fopen(buf, "r")) == NULL) {
+		if ((fopen_s(fp, filename, "r")) == NULL) {
 			//sprintf(buf, "%s_%d", filename, index);
 			//if ((*fp = fopen(buf, "r")) == NULL) {
 				//fprintf(stderr, "Error, cannot find any file of the form %s\n", filename);
 			exit(1);
-			}
 		}
-		VectorStream sm = file_to_buffer(*fp, 1, true);
-		inputType type = (inputType)GHRead<int>(sm);
-		return type;
 	}
+	std::vector<char> sm = file_to_buffer(*fp, 1, true);
+	VectorStream tmp(sm);
+	inputType type = (inputType)GHRead<int>(tmp);
+	return type;
+
+}
+
 	
 
 #endif

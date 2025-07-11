@@ -1,7 +1,4 @@
 #pragma once
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include "Graphene.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"

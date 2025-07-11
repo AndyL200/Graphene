@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Graphene", "Graphene\Graphe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{624D658D-FE15-4CB3-8DAD-7E7EB19CA335}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW", "Graphene\dep\glfw-3.4\GLFW\GLFW.vcxproj", "{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -43,18 +41,6 @@ Global
 		{624D658D-FE15-4CB3-8DAD-7E7EB19CA335}.Release|x64.Build.0 = Release|x64
 		{624D658D-FE15-4CB3-8DAD-7E7EB19CA335}.Release|x86.ActiveCfg = Release|Win32
 		{624D658D-FE15-4CB3-8DAD-7E7EB19CA335}.Release|x86.Build.0 = Release|Win32
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Debug|ARM.ActiveCfg = Debug|ARM
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Debug|ARM.Build.0 = Debug|ARM
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Debug|x64.ActiveCfg = Debug|x64
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Debug|x64.Build.0 = Debug|x64
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Debug|x86.ActiveCfg = Debug|Win32
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Debug|x86.Build.0 = Debug|Win32
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Release|ARM.ActiveCfg = Release|ARM
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Release|ARM.Build.0 = Release|ARM
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Release|x64.ActiveCfg = Release|x64
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Release|x64.Build.0 = Release|x64
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Release|x86.ActiveCfg = Release|Win32
-		{0FD02C2A-D8F3-49C4-AB75-1DC32E52FB5E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -31,11 +31,11 @@ LIST.H
 #include <vector>
 #include <stdlib.h>
 
-typedef struct {
+struct Node {
 	Node* prev;
 	Node* next;
 	void* data;
-} Node;
+};
 
 class List {
 public:

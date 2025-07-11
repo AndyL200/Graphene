@@ -1,9 +1,12 @@
+#pragma once
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include <iostream>
-#include <glm/glm.hpp>
-#include <glad/glad.h>
+#include "Graphene.h"
+#include "Shader.h"
+
+//using method from learnopengl.com
 
 struct Character
 {
@@ -12,7 +15,9 @@ struct Character
 	glm::ivec2 Bearing;
 	unsigned int Advance;
 };
-FT_Face* loadFace(const char* fontFileName) {
+
+Character* loadFont(const char* fontFileName, unsigned int fontSize)
+{
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft))
 	{
@@ -27,15 +32,11 @@ FT_Face* loadFace(const char* fontFileName) {
 		return nullptr;
 	}
 
-	return &face;
-}
-
-Character* getCharacters(FT_Face face, unsigned int fontSize)
-{
+	//expand later for character sets from other languages
 	FT_Set_Pixel_Sizes(face, 0, fontSize);
-	Character characters[96];
+	Character characters[128];
 
-	for (unsigned char c = 32; c < 127; c++)
+	for (unsigned char c = 0; c < 127; c++)
 	{
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 		{
@@ -72,5 +73,60 @@ Character* getCharacters(FT_Face face, unsigned int fontSize)
 		};
 			characters[c - 32] = tmpc;
 	}
+	//REQUIRES ALL TEXTURES HAVE 4-BYTE ALIGNMENT
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	FT_Done_Face(face);
+	FT_Done_FreeType(ft);
 
+	return characters;
+}
+
+void renderText(Shader &s, std::string text, const char* font, float x, float y, float scale, glm::vec3 color) {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	s.Activate();
+	glUniform3f(glGetUniformLocation(s.ID, "textColor"), color.x, color.y, color.z);
+	glActiveTexture(GL_TEXTURE0);
+
+	Character* font_chars = loadFont(font, (int)scale);
+
+	std::string::const_iterator c;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		Character ch = font_chars[*c];
+
+		//starts at the origin???
+		float xpos = x + ch.Bearing.x * scale;
+		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+		float w = ch.Size.x * scale;
+		float h = ch.Size.y * scale;
+
+		float vertices[6][4] = {
+			//Coords        //TexCoords
+			{xpos, ypos + h,		0.0f, 0.0f},
+			{xpos, ypos,			0.0f, 1.0f},
+			{xpos + w, ypos,		1.0f, 1.0f},
+			{xpos, ypos + h,		0.0f, 0.0f},
+			{xpos + w, ypos,		1.0f, 1.0f},
+			{xpos + w, ypos + h,	1.0f, 0.0f}
+		};
+
+		//render glyph texture over quad
+		GLuint VAO1, VBO1;
+		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+
+		//updating content of VBO memory
+		glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		x += (ch.Advance >> 6) * scale;
+	}
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

@@ -1,7 +1,6 @@
-#ifndef GRAPENE_PLOTS
+#ifndef GRAPHENE_PLOTS
 #define GRAPHENE_PLOTS
 
-#include "Graphene.h"
 #include "Lists.h"
 #include "Labels.h"
 
@@ -47,21 +46,25 @@ static enum PlotCategory { // compiling xgmovie was throwing error for unknown L
 
 class plot 
 {
-protected:
-	VectorStream& buffer;
-	PlotDimensions dim;
-	ArrayList<structureData> structures;
+
 public:
-	int xloc;
-	int yloc;
 
 	virtual void updatePlot(double time) = 0;  // bring the plot up to this time
-	plot(VectorStream& buffer, int xloc, int yloc);
+	plot(std::vector<char>& v, int xloc, int yloc) : buffer(v), xloc(xloc), yloc(yloc) {};
 	virtual ~plot() {};
 	virtual ArrayList<structureData> getStructures()
 	{
 		return structures;
 	};
+
+protected:
+	VectorStream buffer;
+	PlotDimensions dim;
+	ArrayList<structureData> structures;
+
+public:
+	int xloc;
+	int yloc;
 };
 
 struct One_D_plot_data {
@@ -71,7 +74,13 @@ public:
 	int n;
 	int color;
 	SCALAR time;
-	One_D_plot_data() {};
+	One_D_plot_data() {
+		this->x = nullptr;
+		this->y = nullptr;
+		this->n = 0;
+		this->color = 0;
+		this->time = 0;
+	};
 };
 
 
@@ -82,19 +91,19 @@ protected:
 	ArrayList<One_D_plot_data>* current;
 	//ArrayList< One_D_plot_data> current_data;
 public:
-	virtual void updatePlot(double time);
-	One_D_plot(VectorStream& in, int xloc, int yloc);
+	//virtual void updatePlot(double time);
+	One_D_plot(std::vector<char>& n, int xloc, int yloc);
 };
 
-class ScatterPlot : public One_D_plot {
-public:
-	ScatterPlot(VectorStream& in, int xloc, int yloc);
-};
-
-class LinePlot : public One_D_plot {
-public:
-	LinePlot(VectorStream& in, int xloc, int yloc);
-};
+//class ScatterPlot : public One_D_plot {
+//public:
+//	ScatterPlot(vector<char>& n, int xloc, int yloc);
+//};
+//
+//class LinePlot : public One_D_plot {
+//public:
+//	LinePlot(vector<char>& n, int xloc, int yloc);
+//};
 
 
 
@@ -113,7 +122,7 @@ public:
 	ArrayList< SurfacePlotData > graphdata;
 	//ListIter<SurfacePlotData>* current;
 	virtual void updatePlot(double time);
-	SurfacePlot(VectorStream& in, int xloc, int yloc);
+	SurfacePlot(std::vector<char>& n, int xloc, int yloc);
 };
 
 class VectorPlotData {
@@ -123,18 +132,18 @@ public:
 	SCALAR time;
 };
 
-class VectorPlot : public plot {
-public:
-	int n, m;
-	SCALAR* x;
-	SCALAR* y;
-	SCALAR** z;
-	SCALAR** w;
-	ArrayList< VectorPlotData > graphdata;
-	//ListIter<VectorPlotData>* current;
-	virtual void updatePlot(double time);
-	VectorPlot(VectorStream& in, int xloc, int yloc);
-};
+//class VectorPlot : public plot {
+//public:
+//	int n, m;
+//	SCALAR* x;
+//	SCALAR* y;
+//	SCALAR** z;
+//	SCALAR** w;
+//	ArrayList< VectorPlotData > graphdata;
+//	//ListIter<VectorPlotData>* current;
+//	virtual void updatePlot(double time);
+//	VectorPlot(vector<char>& n, int xloc, int yloc);
+//};
 
 
 #endif

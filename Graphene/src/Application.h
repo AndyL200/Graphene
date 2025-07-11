@@ -1,17 +1,23 @@
 #pragma once
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include "Graphene.h"
 #include <Windows/Window.h>
-#include "Module.h"
 
+
+#include "TextGeneration.h"
+#include "Module.h"
 
 
 namespace Graphene {
 
-	enum GrapheneColorDefaults : GL_RGBA
+	namespace GrapheneColorDefaults
 	{
-		GrapheneGrey = {0.1f, 0.5f, 0.9f, 1.0f},
+		struct GrapheneColor {
+			float r, b, g;
+		};
+
+		constexpr GrapheneColor Grey = { 0.1f, 0.5f, 0.9f };
+		constexpr GrapheneColor ambient_background_1 = {0.1f, 0.7f, 1.0f};
+
 
 	};
 
@@ -20,26 +26,25 @@ namespace Graphene {
 	public:
 		Application(int argc = 0, char* argv[] = nullptr) {}
 
-		virtual void onUpdate() const = 0;
+		virtual void onUpdate() const;
 
-		virtual bool init(int argc, char* argv[]) const = 0;
+		virtual bool init(int argc, char* argv[]) const;
 	
-		void GHSetupWindow(const char* Win_Title, int width, int height, uint16_t WinType, Dimensions* label_ptr, int PlotType);
+		void GHSetupWindow(Window* Win_Title, uint16_t WinType, Dimensions* label_ptr, int PlotType);
 
-		void GHSetupWindow(const char* Win_Title, int width, int height, int WinType, Dimensions* label_ptr);
-
-		void GHSetupWindow(const char* Win_Title, int width, int height, int WinType, Dimensions label_ptr);
+		void GHSetupWindow(Window* Win_Title, uint16_t WinType, Dimensions* label_ptr);
 
 		void GHSet2D(const char* PlotType, const char* X_Label, const char* Y_Label,
 			const char* State,
 			int ulx, int uly, SCALAR X_Scale, SCALAR Y_Scale,
 			int X_Auto_Rescale, int Y_Auto_Rescale, SCALAR X_Min,
 			SCALAR X_Max, SCALAR Y_Min, SCALAR Y_Max);
-		
-		void GHModCreate();
+		void SetVsync();
+		Module GHModCreatePlot(const char* theInputFile);
 		void GHModLoadSetup(const char* Title, uint32_t WinType, Dimensions* label_ptr, uint16_t PlotType);
 
 		void GHStart();
+		void GHClose();
 
 		private:
 			bool is_running;
