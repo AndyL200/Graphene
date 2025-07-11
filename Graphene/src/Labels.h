@@ -1,20 +1,26 @@
-#pragma once
-typedef struct {
-	double          Z_Scale;
-	double          Z_Min;
-	double          Z_Max;
-	char* Z_Label;
-	int             Z_Auto_Rescale;
-	double          Y_Scale;
-	double          Y_Offset;
-	double          Y_Min;
-	double          Y_Max;
-	char* Y_Label;
-	int             Y_Auto_Rescale;
-	double          X_Scale;
-	double          X_Offset;
-	double          X_Min;
-	double          X_Max;
-	char* X_Label;
-	int             X_Auto_Rescale;
-} PlotDimensions, Dimensions;
+#ifndef GRAPHENE_LABELS
+#define GRAPHENE_LABELS
+
+struct Dimensions {
+	double          Z_Scale = 0;
+	double          Z_Min = 0;
+	double          Z_Max = 0;
+	char* Z_Label = nullptr;
+	int             Z_Auto_Rescale = 0;
+	double          Y_Scale = 0;
+	double          Y_Offset = 0;
+	double          Y_Min = 0;
+	double          Y_Max = 0;
+	char* Y_Label = nullptr;
+	int             Y_Auto_Rescale = 0;
+	double          X_Scale = 0;
+	double          X_Offset = 0;
+	double          X_Min = 0;
+	double          X_Max = 0;
+	char* X_Label = nullptr;
+	int             X_Auto_Rescale = 0;
+
+	Dimensions() {}
+};
+
+#endif

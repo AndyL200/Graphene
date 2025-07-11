@@ -1,17 +1,16 @@
 #include "Plots.h"
-#include <xutility>
 
 
 
-PlotDimensions ReadLabel(VectorStream& in) {
+Dimensions ReadLabel(VectorStream& in) {
 	int type;
 	char buf[100];
 	char* labels;
 	int l;
-	PlotDimensions* label = (PlotDimensions*)malloc(sizeof(PlotDimensions));
+	Dimensions* label = (Dimensions*)malloc(sizeof(Dimensions));
 	SCALAR scale, min, max;
 	//Read 1st string
-	l = GHRead<int>(in);  //size
+	l = *GHRead<int>(in);  //size
 	labels = (char*)malloc((l + 1) * sizeof(char));
 	if (l > 0) {
 		in.read(labels, l);
@@ -22,7 +21,7 @@ PlotDimensions ReadLabel(VectorStream& in) {
 	}
 
 	//Read 2st string
-	l = GHRead<int>(in);  //size
+	l = *GHRead<int>(in);  //size
 	labels = (char*)malloc((l + 1) * sizeof(char));
 	if (l > 0) {
 		in.read(labels, l);
@@ -30,7 +29,7 @@ PlotDimensions ReadLabel(VectorStream& in) {
 		label->Y_Label = labels;
 	}
 	//Read 3st string
-	l = GHRead<int>(in);  //size
+	l = *GHRead<int>(in);  //size
 	labels = (char*)malloc((l + 1) * sizeof(char));
 	if (l > 0) {
 		in.read(labels, l);
@@ -38,33 +37,33 @@ PlotDimensions ReadLabel(VectorStream& in) {
 		label->Z_Label = labels;
 	}
 	// read the info on the X axis
-	scale = GHRead<SCALAR>(in);
+	scale = *GHRead<SCALAR>(in);
 	label->X_Scale = 1;//scale;
-	min = GHRead<SCALAR>(in);
+	min = *GHRead<SCALAR>(in);
 	label->X_Min = min;
-	max = GHRead<SCALAR>(in);
+	max = *GHRead<SCALAR>(in);
 	label->X_Max = max;
-	label->X_Auto_Rescale = GHRead<SCALAR>(in);
+	label->X_Auto_Rescale = *GHRead<SCALAR>(in);
 
 
 	// read the info on the Y axis
-	scale = GHRead<SCALAR>(in);
+	scale = *GHRead<SCALAR>(in);
 	label->Y_Scale = 1;//scale;
-	min = GHRead<SCALAR>(in);
+	min = *GHRead<SCALAR>(in);
 	label->Y_Min = min;
-	max = GHRead<SCALAR>(in);
+	max = *GHRead<SCALAR>(in);
 	label->Y_Max = max;
-	label->Y_Auto_Rescale = GHRead<SCALAR>(in);
+	label->Y_Auto_Rescale = *GHRead<SCALAR>(in);
 
 
 	// read the info on the Z axis
-	scale = GHRead<SCALAR>(in);
+	scale = *GHRead<SCALAR>(in);
 	label->Z_Scale = 1;//scale;
-	min = GHRead<SCALAR>(in);
+	min = *GHRead<SCALAR>(in);
 	label->Z_Min = min;
-	max = GHRead<SCALAR>(in);
+	max = *GHRead<SCALAR>(in);
 	label->Z_Max = max;
-	label->Z_Auto_Rescale = GHRead<SCALAR>(in);
+	label->Z_Auto_Rescale = *GHRead<SCALAR>(in);
 
 	return *label;
 }
@@ -73,21 +72,21 @@ PlotDimensions ReadLabel(VectorStream& in) {
 One_D_plot::One_D_plot(std::vector<char>& v, int xloc, int yloc) : plot(v, xloc, yloc) {
 	int type;
 	ArrayList<ArrayList<One_D_plot_data> > tmp;
-	int count = GHRead<int>(buffer);
+	int count = *GHRead<int>(buffer);
 	buffer.clear();
 	buffer.seekg(0, std::ios::beg);
 	//  for(i=1;openFile(&fp,filename,i)!=-1;i++) {
 	for (int i = 0; i < count; i++) {
 		ArrayList<One_D_plot_data>* in_data = new ArrayList<One_D_plot_data>;
 		SCALAR the_time;
-		type = GHRead<int>(buffer);
+		type = *GHRead<int>(buffer);
 		this->dim = ReadLabel(buffer);
-		the_time = GHRead<SCALAR>(buffer);
+		the_time = *GHRead<SCALAR>(buffer);
 		//issue ArrayList cannot be read
 		while(!buffer.eof()) {
 			One_D_plot_data* dat = new One_D_plot_data();
-			dat->n = GHRead<int>(buffer);
-			dat->color = GHRead<int>(buffer);
+			dat->n = *GHRead<int>(buffer);
+			dat->color = *GHRead<int>(buffer);
 			int Skip = 1;
 			
 			if (dat->n == -1) {  // the exit condition 
@@ -113,8 +112,8 @@ One_D_plot::One_D_plot(std::vector<char>& v, int xloc, int yloc) : plot(v, xloc,
 			for (int j = 0; j < dat->n; j++) {
 				if (j % Skip != 0)
 					continue;
-				SCALAR xval = GHRead<SCALAR>(buffer);
-				SCALAR yval = GHRead<SCALAR>(buffer);
+				SCALAR xval = *GHRead<SCALAR>(buffer);
+				SCALAR yval = *GHRead<SCALAR>(buffer);
 				dat->x[idx] = xval;
 				dat->y[idx] = yval;
 				++idx;

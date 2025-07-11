@@ -1,8 +1,12 @@
 #ifndef GRAPHENE_PLOTS
 #define GRAPHENE_PLOTS
 
+#include <xutility>
+
 #include "Lists.h"
 #include "Labels.h"
+#include "Core.h"
+#include "grfyreadwrt.h"
 
 static int MAX_LIN = 12000;
 
@@ -59,7 +63,7 @@ public:
 
 protected:
 	VectorStream buffer;
-	PlotDimensions dim;
+	Dimensions dim;
 	ArrayList<structureData> structures;
 
 public:

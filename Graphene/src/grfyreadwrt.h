@@ -42,31 +42,34 @@ private:
 
 //from buffer to ptr
 template <typename T>
-T GHRead(VectorStream& in);
+T* GHRead(VectorStream& in);
 //from ptr to buffer
 
 //can there be more than one of these objects in the buffer though?
 int GHWrite(void*& ptr, VectorStream& in);
 
+
+//so far only works for primitive types
+
+//future endian check here too
 template <typename T>
-T GHRead(VectorStream& in)
+T* GHRead(VectorStream& in)
 {
-	T obj;
-	T* ptr = &obj;
+	T* ptr;
 	size_t size = sizeof(T);
 	if (size <= sizeof((void*)0)) {
-		return (T)0;
+		return nullptr;
 	}
 
 	if (in.rdbuf()->in_avail() < size)
-		return (T)0;
+		return nullptr;
 
 	ptr = reinterpret_cast<T*>(malloc(size));
 	if (!ptr)
-		return (T)0;
-
-	in.read(ptr, size);
-	return *ptr;
+		return nullptr;
+	//&ptr[0]
+	in.read((char*)&ptr[0], size);
+	return ptr;
 }
 
 //to read in bytes
@@ -93,7 +96,6 @@ std::vector<char> file_to_buffer(FILE* fp, size_t to_read, bool locator_change)
 
 inputType openFile(FILE** fp, char* filename, int index)
 {
-	char buf[100];
 	//why is index even needed?
 	if (index == 0 || index == 1) {
 		if ((fopen_s(fp, filename, "r")) == NULL) {
@@ -105,7 +107,7 @@ inputType openFile(FILE** fp, char* filename, int index)
 	}
 	std::vector<char> sm = file_to_buffer(*fp, 1, true);
 	VectorStream tmp(sm);
-	inputType type = (inputType)GHRead<int>(tmp);
+	inputType type = *(inputType*)GHRead<int>(tmp);
 	return type;
 
 }

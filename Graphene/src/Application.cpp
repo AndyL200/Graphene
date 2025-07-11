@@ -114,10 +114,6 @@ namespace Graphene {
 		//maybe just resize/restructure main window???
 		//main = glfwCreateWindow(width, height, Win_Title->GetTitle(), NULL, NULL);
 
-		glfwMakeContextCurrent(main);
-		Win_Title->plotInit(main, WinType);
-
-
 	}
 	//assumes not plot
 	void Application::GHSetupWindow(Window* Win_Title, uint16_t WinType, Dimensions* label_ptr) {
@@ -125,10 +121,6 @@ namespace Graphene {
 		int height = Win_Title->GetHeight();
 
 		main = glfwCreateWindow(width, height, Win_Title->GetTitle(), NULL, NULL);
-
-		glfwMakeContextCurrent(main);
-		Win_Title->freeInit();
-
 	}
 
 	void Application::GHSet2D(const char* PlotType, const char* X_Label, const char* Y_Label,
@@ -139,16 +131,16 @@ namespace Graphene {
 	{
 		int             plottype;
 
-		Dimensions* label_ptr;
+		Dimensions* label_ptr = new Dimensions();
 
 		//label_ptr = SetupLabelStruct();
-		label_ptr->Y_Label = strdup(Y_Label);
+		label_ptr->Y_Label = _strdup(Y_Label);
 		label_ptr->Y_Min = Y_Min;
 		label_ptr->Y_Max = Y_Max;
 		label_ptr->Y_Scale = Y_Scale;
 		label_ptr->Y_Auto_Rescale = Y_Auto_Rescale;
 
-		label_ptr->X_Label = strdup(X_Label);
+		label_ptr->X_Label = _strdup(X_Label);
 		label_ptr->X_Min = X_Min;
 		label_ptr->X_Max = X_Max;
 		label_ptr->X_Scale = X_Scale;
@@ -171,8 +163,8 @@ namespace Graphene {
 
 		//Search module directory for this file first
 
-		FILE* inputfile;
-		FILE* tmp;
+		FILE* inputfile = new FILE;
+		FILE* tmp = new FILE;
 		ArrayList<ArrayList<verts>> v;
 		//convert plots to vertices?
 		ArrayList<plot>* thePlots = new ArrayList<plot>;
@@ -181,7 +173,7 @@ namespace Graphene {
 		char lastline[512];
 		int xloc, yloc;
 		//XInit(argc, argv, &theTime);
-		if ((inputfile = fopen(theInputFile, "r")) == NULL) {
+		if ((fopen_s(&inputfile, theInputFile, "r")) == NULL) {
 			fprintf(stderr, "Cannot open inputfile.  Exiting.");
 			exit(1);
 		}
@@ -198,14 +190,14 @@ namespace Graphene {
 
 		while (fgets(line, 511, inputfile)) {
 
-			sscanf(line, "%s %d %d", filename, &xloc, &yloc);
+			sscanf_s(line, "%s %d %d", filename, &xloc, &yloc);
 			//	 sscanf(line,"%d %d",&xloc,&yloc);
 			// 
 
 			xloc = std::max(xloc, 1); //xloc = min(700, xloc);
 			yloc = std::max(yloc, 1); //yloc = min(700, yloc);
 			if (!strcmp(filename, "END")) break;
-			vector<char> inV = file_to_buffer(tmp, 0, true);
+			std::vector<char> inV = file_to_buffer(tmp, 0, true);
 
 			inputType t = openFile(&tmp, filename, 0);
 			switch (t)
@@ -244,7 +236,8 @@ namespace Graphene {
 			fclose(tmp);
 		}
 		//create file using filename
-		Module m(*theInputFile + ".mod", v);
+		const char* t = *theInputFile + ".mod";
+		Module m(t, v);
 		return m;
 	};
 	void Application::GHModLoadSetup(const char* Title, uint32_t WinType, Dimensions* label_ptr, uint16_t PlotType)

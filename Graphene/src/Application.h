@@ -1,10 +1,13 @@
-#pragma once
-#include <GLFW/glfw3.h>
-#include <Windows/Window.h>
+#ifndef GRAPHENE_APPLICATION
+#define GRAPHENE_APPLICATION
 
 
+#include "Core.h"
 #include "TextGeneration.h"
 #include "Module.h"
+#include "Graphene.h"
+
+#include <GHWindow/GHWindow.h>
 
 
 namespace Graphene {
@@ -22,9 +25,9 @@ namespace Graphene {
 	};
 
 
-	class Application {
+	Graphene_API class Application {
 	public:
-		Application(int argc = 0, char* argv[] = nullptr) {}
+		Application(int argc, char* argv[]);
 
 		virtual void onUpdate() const;
 
@@ -53,3 +56,6 @@ namespace Graphene {
 
 	};
 }
+
+
+#endif

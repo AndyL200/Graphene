@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "GHWindow.h"
 
 namespace Graphene {
 		THREEDWindow::THREEDWindow(WindowProps props, int type) : Window(props) {
@@ -15,16 +15,13 @@ namespace Graphene {
 			return props.Title.c_str();
 		}
 
-		GLFWwindow* THREEDWindow::Create()
+		/*GLFWwindow* THREEDWindow::Create()
 		{
 
-		}
+		}*/
 
-		void THREEDWindow::plotInit(GLFWwindow* window, int type = (WINDOW_PLOT | WINDOW2D)) {
+		void THREEDWindow::plotInit(GLFWwindow* window) {
 			VAO VAO1;
-
-
-
 
 			gladLoadGL();
 			int width, height;
@@ -34,7 +31,7 @@ namespace Graphene {
 
 		}
 
-		void THREEDWindow::freeInit(GLFWwindow* window, int type = (WINDOW_FREE | WINDOW2D)) {
+		void THREEDWindow::freeInit(GLFWwindow* window) {
 
 		}
 

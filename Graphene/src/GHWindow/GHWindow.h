@@ -1,7 +1,9 @@
-#pragma once
-#include "VAO.h"
-#include "VBO.h"
-#include "EBO.h"
+#ifndef GRAPHENE_WINDOW
+#define GRAPHENE_WINDOW
+
+
+#include "Core.h"
+#include "Graphene.h"
 
 namespace Graphene {
 
@@ -15,7 +17,7 @@ namespace Graphene {
 		WINDOW_FREE = BIT(6)
 	};
 
-
+	
 	struct WindowProps
 	{
 		std::string Title;
@@ -27,30 +29,16 @@ namespace Graphene {
 			this->Height = w.Height;
 			return *this;
 		}
-		WindowProps(const std::string& title = "Grapene Graphics", unsigned int width = 1280, unsigned int height = 720) : Title(title), Width(width), Height(height)
+		WindowProps(const std::string& title = "Graphene Graphics", unsigned int width = 1280, unsigned int height = 720) : Title(title), Width(width), Height(height)
 		{
 
 		}
 
 	};
 
-	static GLFWwindow* CreateWindow(const WindowProps& props = WindowProps(), const int type)
-	{
-		if (type & WINDOW2D) {
-			TWODWindow window(props, type);
-			return window.Create();
-		}
-		else if (type & WINDOW3D) {
-			THREEDWindow window(props, type);
-			return window.Create();
-		}
-		else {
-			return nullptr;
-		}
-	}
+	
 
-
-	class Graphene_API Window {
+	class Window {
 	public:
 		//using EventCallbackFn = std::function<void(Event&)>;
 
@@ -73,17 +61,17 @@ namespace Graphene {
 		WindowProps props;
 	};
 
-	class Graphene_API TWODWindow : public Window {
+	class TWODWindow : public Window {
 	public:
-		TWODWindow(WindowProps props, int type) : Window(props);
+		TWODWindow(WindowProps props, int type);
 
 		GLFWwindow* Create();
 
 		//theory, inline may help keep the context defined in Application
-		void inline plotInit(GLFWwindow* window, int type = (WINDOW_PLOT | WINDOW2D));
+		void inline plotInit(GLFWwindow* window);
 
-		void freeInit(GLFWwindow* window, int type = (WINDOW_FREE | WINDOW2D));
-		void SetVertices(vector<float>& v);
+		void freeInit(GLFWwindow* window);
+		void SetVertices(std::vector<float>& v);
 
 		GLfloat* GetVertices();
 
@@ -99,21 +87,43 @@ namespace Graphene {
 
 
 
-	class Graphene_API THREEDWindow : public Window {
+	class THREEDWindow : public Window {
 	public:
-		THREEDWindow(WindowProps props, int type) : Window(props);
+		THREEDWindow(WindowProps props, int type);
 		unsigned int GetWidth() override;
 		unsigned int GetHeight() override;
 		const char* GetTitle() override;
 		GLFWwindow* Create();
 
-		void plotInit(GLFWwindow* window, int type = (WINDOW_PLOT | WINDOW2D));
+		void plotInit(GLFWwindow* window);
 		
 
-		void freeInit(GLFWwindow* window, int type = (WINDOW_FREE | WINDOW2D));
+		void freeInit(GLFWwindow* window);
 
 		void OnUpdate() override;
+
+		int type;
+		GLfloat* vertices;
 	};
+
+	/*static GLFWwindow* CreateWindow(const WindowProps& props = WindowProps(), const int type = WINDOW_FREE)
+	{
+		if (type & WINDOW2D) {
+			TWODWindow window(props, type);
+			return window.Create();
+		}
+		else if (type & WINDOW3D) {
+			THREEDWindow window(props, type);
+			return window.Create();
+		}
+		else {
+			return nullptr;
+		}
+	}*/
+
 }
 
 
+
+
+#endif

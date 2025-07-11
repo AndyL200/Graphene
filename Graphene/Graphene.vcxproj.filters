@@ -48,10 +48,10 @@
     <ClInclude Include="dep\glfw-3.4\GLFW\include\GLFW\glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Windows\Window.h">
+    <ClInclude Include="src\GHWindow\GHWindow.h">
       <Filter>Header Files\Window</Filter>
     </ClInclude>
-    <ClInclude Include="src\Windows\WinWindow\WinWindow.h">
+    <ClInclude Include="src\GHWindow\WinWindow\WinWindow.h">
       <Filter>Header Files\Window\Win32Win</Filter>
     </ClInclude>
     <ClInclude Include="src\Labels.h">
@@ -1064,7 +1064,7 @@
     <ClCompile Include="dep\other_guy\xsect.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Windows\WinWindow\WinWindow.cpp">
+    <ClCompile Include="src\GHWindow\WinWindow\WinWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Plots.cpp">
@@ -1079,10 +1079,10 @@
     <ClCompile Include="src\EBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Windows\TWODWindow.cpp">
+    <ClCompile Include="src\GHWindow\TWODWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Windows\THREEDWindow.cpp">
+    <ClCompile Include="src\GHWindow\THREEDWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Shader.cpp">

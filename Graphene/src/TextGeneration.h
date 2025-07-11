@@ -2,9 +2,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <iostream>
+#include "Core.h"
 #include "Graphene.h"
-#include "Shader.h"
 
 //using method from learnopengl.com
 
@@ -82,9 +81,13 @@ Character* loadFont(const char* fontFileName, unsigned int fontSize)
 }
 
 void renderText(Shader &s, std::string text, const char* font, float x, float y, float scale, glm::vec3 color) {
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
+	VAO VAO1;
+	VBO VBO1;
+
 	s.Activate();
 	glUniform3f(glGetUniformLocation(s.ID, "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
@@ -114,11 +117,11 @@ void renderText(Shader &s, std::string text, const char* font, float x, float y,
 		};
 
 		//render glyph texture over quad
-		GLuint VAO1, VBO1;
+		VAO1.Bind();
+		VBO1.Bind();
 		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 
 		//updating content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, VBO1);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 

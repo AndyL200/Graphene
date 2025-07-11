@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "GHWindow.h"
 
 namespace Graphene {
 	TWODWindow::TWODWindow(WindowProps props, int type) : Window(props) {
@@ -16,21 +16,21 @@ namespace Graphene {
 		{
 			if (type & (WINDOW_SCATTER_PLOT | WINDOW_VECTOR_PLOT | WINDOW_ONE_D_PLOT))
 			{
-				plotInit(window, type);
-				return;
+				plotInit(window);
+				return window;
 			}
 
 			plotInit(window);
-			return;
+			return window;
 		}
 
 		freeInit(window);
-		return;
+		return window;
 
 	}
 
 	//theory, inline may help keep the context defined in Application
-	void inline TWODWindow::plotInit(GLFWwindow* window, int type = (WINDOW_PLOT | WINDOW2D)) {
+	void inline TWODWindow::plotInit(GLFWwindow* window) {
 
 		GLfloat verts[] = {
 			// COORDINATES     // COLOR
@@ -73,11 +73,11 @@ namespace Graphene {
 
 	}
 
-	void TWODWindow::freeInit(GLFWwindow* window, int type = (WINDOW_FREE | WINDOW2D)) {
+	void TWODWindow::freeInit(GLFWwindow* window) {
 
 	}
 
-	void TWODWindow::SetVertices(vector<float>& v) { this->vertices = v; }
+	void TWODWindow::SetVertices(std::vector<float>& v) { this->vertices = v.data(); }
 
 	GLfloat* TWODWindow::GetVertices() {
 		return vertices;

@@ -344,8 +344,8 @@
     <ClInclude Include="src\TextGeneration.h" />
     <ClInclude Include="src\VAO.h" />
     <ClInclude Include="src\VBO.h" />
-    <ClInclude Include="src\Windows\Window.h" />
-    <ClInclude Include="src\Windows\WinWindow\WinWindow.h" />
+    <ClInclude Include="src\GHWindow\GHWindow.h" />
+    <ClInclude Include="src\GHWindow\WinWindow\WinWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dep\include\glm\detail\glm.cpp" />
@@ -374,9 +374,9 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\VAO.cpp" />
     <ClCompile Include="src\VBO.cpp" />
-    <ClCompile Include="src\Windows\THREEDWindow.cpp" />
-    <ClCompile Include="src\Windows\TWODWindow.cpp" />
-    <ClCompile Include="src\Windows\WinWindow\WinWindow.cpp" />
+    <ClCompile Include="src\GHWindow\THREEDWindow.cpp" />
+    <ClCompile Include="src\GHWindow\TWODWindow.cpp" />
+    <ClCompile Include="src\GHWindow\WinWindow\WinWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\glm\detail\func_common.inl" />
