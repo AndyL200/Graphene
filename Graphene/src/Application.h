@@ -2,7 +2,10 @@
 #define GRAPHENE_APPLICATION
 
 
+#include "Core.h"
+#include "TextGeneration.h"
 #include "Module.h"
+#include "Graphene.h"
 
 #include <GHWindow/GHWindow.h>
 

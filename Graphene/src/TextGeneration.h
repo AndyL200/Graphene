@@ -121,6 +121,7 @@ void renderText(Shader &s, std::string text, const char* font, float x, float y,
 		};
 
 		//render glyph texture over quad
+		VAO1.Bind();
 		VBO1.Bind();
 		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 

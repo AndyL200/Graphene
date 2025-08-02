@@ -1,4 +1,4 @@
- #ifndef GH_SHADER
+#ifndef GH_SHADER
 #define GH_SHADER
 
 #include "pchgrfy.h"

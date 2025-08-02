@@ -578,11 +578,49 @@ libcmt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDepen
     <ClInclude Include="src\Module.h" />
     <ClInclude Include="src\pchgrfy.h" />
     <ClInclude Include="src\Plots.h" />
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\Core.h" />
+    <ClInclude Include="src\EntryPoint.h" />
+    <ClInclude Include="src\Graphene.h" />
+    <ClInclude Include="src\pchgrfy.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\ShaderHead.h" />
     <ClInclude Include="src\TextGeneration.h" />
     <ClInclude Include="src\VAO.h" />
     <ClInclude Include="src\VBO.h" />
+    <ClInclude Include="src\GHWindow\GHWindow.h" />
+    <ClInclude Include="src\GHWindow\WinWindow\WinWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dep\include\glm\detail\glm.cpp" />
+    <ClCompile Include="dep\other_guy\argonmcc.c" />
+    <ClCompile Include="dep\other_guy\fft.c" />
+    <ClCompile Include="dep\other_guy\field.c" />
+    <ClCompile Include="dep\other_guy\gather.c" />
+    <ClCompile Include="dep\other_guy\heliummcc.c" />
+    <ClCompile Include="dep\other_guy\initwin.c" />
+    <ClCompile Include="dep\other_guy\load.c" />
+    <ClCompile Include="dep\other_guy\maxwellv.c" />
+    <ClCompile Include="dep\other_guy\mcc.c" />
+    <ClCompile Include="dep\other_guy\mccdiaginit.c" />
+    <ClCompile Include="dep\other_guy\move.c" />
+    <ClCompile Include="dep\other_guy\neonmcc.c" />
+    <ClCompile Include="dep\other_guy\nitrogen.c" />
+    <ClCompile Include="dep\other_guy\oxygenmcc.c" />
+    <ClCompile Include="dep\other_guy\padjus.c" />
+    <ClCompile Include="dep\other_guy\pdp1.c" />
+    <ClCompile Include="dep\other_guy\prest.c" />
+    <ClCompile Include="dep\other_guy\start.c" />
+    <ClCompile Include="dep\other_guy\xsect.c" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\EBO.cpp" />
+    <ClCompile Include="src\Plots.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\VAO.cpp" />
+    <ClCompile Include="src\VBO.cpp" />
+    <ClCompile Include="src\GHWindow\THREEDWindow.cpp" />
+    <ClCompile Include="src\GHWindow\TWODWindow.cpp" />
+    <ClCompile Include="src\GHWindow\WinWindow\WinWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\glm\detail\func_common.inl" />
@@ -658,6 +696,7 @@ libcmt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDepen
     <None Include="dep\include\glm\gtc\quaternion.inl" />
     <None Include="dep\include\glm\gtc\quaternion_simd.inl" />
     <None Include="dep\include\glm\gtc\random.inl" />
+    <None Include="dep\include\glm\gtc\reciprocal.inl" />
     <None Include="dep\include\glm\gtc\round.inl" />
     <None Include="dep\include\glm\gtc\type_precision.inl" />
     <None Include="dep\include\glm\gtc\type_ptr.inl" />
@@ -731,6 +770,165 @@ libcmt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDepen
     <Library Include="dep\lib\freetype.lib" />
     <Library Include="dep\lib\glfw3.lib" />
   </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{ca45225f-33cc-451f-8f53-e4c438ba1e59}</ProjectGuid>
+    <RootNamespace>Graphene</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\bin$(Platform)\$(Configuration)</OutDir>
+    <IntDir>..\bin-int\$(Platform)\$(Configuration)</IntDir>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Graphene\dep\include</IncludePath>
+    <LibraryPath>$(SolutionDir)Graphene\Graphene\dep\lib;$(LibraryPath);</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>..\bin$(Platform)\$(Configuration)</OutDir>
+    <IntDir>..\bin-int\$(Platform)\$(Configuration)</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Graphene\dep\include</IncludePath>
+    <LibraryPath>$(SolutionDir)Graphene\Graphene\dep\lib;$(LibraryPath);</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\bin$(Platform)\$(Configuration)</OutDir>
+    <IntDir>..\bin-int\$(Platform)\$(Configuration)</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Graphene\dep\include</IncludePath>
+    <LibraryPath>$(SolutionDir)Graphene\Graphene\dep\lib;$(LibraryPath);</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\bin$(Platform)\$(Configuration)</OutDir>
+    <IntDir>..\bin-int\$(Platform)\$(Configuration)</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Graphene\dep\include</IncludePath>
+    <LibraryPath>$(SolutionDir)Graphene\Graphene\dep\lib;$(LibraryPath);</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>BUILD_DLL;UNICODE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Graphene\dep\include;$(SolutionDir)Graphene\src;$(SolutionDir)Graphene\fonts;</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pchgrfy.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>NotSet</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;freetype.lib;</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>BUILD_DLL;UNICODE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Graphene\dep\include;$(SolutionDir)Graphene\src;$(SolutionDir)Graphene\fonts;</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pchgrfy.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>NotSet</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;freetype.lib;</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>BUILD_DLL;UNICODE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pchgrfy.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Graphene\dep\include;$(SolutionDir)Graphene\src;$(SolutionDir)Graphene\fonts;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>NotSet</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;freetype.lib;</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>BUILD_DLL;UNICODE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Graphene\dep\include;$(SolutionDir)Graphene\src;$(SolutionDir)Graphene\fonts;</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pchgrfy.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>NotSet</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glew32.lib;glfw3.lib;freetype.lib;</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

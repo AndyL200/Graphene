@@ -1297,6 +1297,97 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\argonmcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\fft.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\field.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\gather.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\heliummcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\initwin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\load.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\maxwellv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\mcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\mccdiaginit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\move.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\neonmcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\nitrogen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\oxygenmcc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\padjus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\pdp1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\prest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\start.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\other_guy\xsect.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GHWindow\WinWindow\WinWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Plots.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GHWindow\TWODWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GHWindow\THREEDWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dep\include\glm\detail\glm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\glyphs.vert" />
+    <None Include="src\glyphs.frag" />
     <None Include="dep\include\glm\detail\func_common.inl">
       <Filter>Header Files</Filter>
     </None>
@@ -1397,6 +1488,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="dep\include\glm\detail\type_vec4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="dep\include\glm\detail\type_vec4_simd.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="dep\include\glm\ext\matrix_clip_space.inl">
@@ -1514,6 +1608,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="dep\include\glm\gtc\random.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="dep\include\glm\gtc\reciprocal.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="dep\include\glm\gtc\round.inl">

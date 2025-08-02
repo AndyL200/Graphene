@@ -11,7 +11,7 @@ namespace Graphene {
 
 	struct verts {
 		//Modules should contain an cylic list of vertices to match XGrafix behavior with OpenGL
-		GLfloat* coordinates;  
+		GLfloat* coordinates;
 		GLfloat* rgb;
 		GLfloat* normal;
 		verts(GLfloat* coor, GLfloat* rgb, GLfloat* norm)
