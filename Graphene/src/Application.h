@@ -2,12 +2,8 @@
 #define GRAPHENE_APPLICATION
 
 
-#include "Core.h"
-#include "TextGeneration.h"
 #include "Module.h"
-#include "Graphene.h"
-
-#include <GHWindow/GHWindow.h>
+#include "GHWindow/GHWindow.h"
 
 
 namespace Graphene {
@@ -25,13 +21,14 @@ namespace Graphene {
 	};
 
 
-	Graphene_API class Application {
+	class GRAPHENE_API Application {
 	public:
 		Application(int argc = 0, char* argv[] = nullptr);
+		//Application();
 
-		virtual void onUpdate() const;
+		void onUpdate() const;
 
-		virtual bool init(int argc, char* argv[]) const;
+		bool init(int argc, char* argv[]) const;
 	
 		void GHSetupWindow(Window* Win_Title, uint16_t WinType, Dimensions* label_ptr, int PlotType);
 
@@ -45,6 +42,8 @@ namespace Graphene {
 		void SetVsync();
 		Module GHModCreatePlot(const char* theInputFile);
 		void GHModLoadSetup(const char* Title, uint32_t WinType, Dimensions* label_ptr, uint16_t PlotType);
+
+		GLFWwindow* getWindow();
 
 		void GHStart();
 		void GHClose();

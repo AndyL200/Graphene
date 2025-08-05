@@ -1,15 +1,17 @@
 #pragma once
-#include "Application.h"
-#include "Graphene.h"
+
+#ifdef GH_PLATFORM_WINDOWS
+
 
 extern Graphene::Application* CreateApplication();
 
 
 	int main() {
-		Graphene::Application* app = CreateApplication();
+		auto app = CreateApplication();
 		app->GHStart();
 
 		app->GHClose();
 		return 0;
 	}
 
+#endif

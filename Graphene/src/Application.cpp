@@ -1,18 +1,26 @@
 #include "Application.h"
 
 
+extern void renderText(Shader& s, std::string text, const char* font, float x, float y, float scale, glm::vec3 color);
+extern Character* loadFont(const char* fontFileName, unsigned int fontSize);
+
 namespace Graphene {
 
 	Application::Application(int argc, char* argv[]) {
+		if (!init(argc, argv))
+		{
+			std::cout << "Cannot initialize" << std::endl;
+		}
+
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		init(argc, argv);
-		gladLoadGL();
-
 		//read logic here
+		main = glfwCreateWindow(1280, 720, "App", NULL, NULL);
+		glfwMakeContextCurrent(main);
 
+		gladLoadGL();
 	};
 
 	void setClearColor(const GrapheneColorDefaults::GrapheneColor& color)
@@ -33,8 +41,14 @@ namespace Graphene {
 		glfwTerminate();
 	}
 
+	GLFWwindow* Application::getWindow()
+	{
+		return main;
+	}
+
 	void Application::GHStart() {
-		main = glfwCreateWindow(1280, 720, "App", NULL, NULL);
+		std::cout << "Program Start" << std::endl;
+
 
 		int width, height;
 		glfwGetWindowSize(main, &width, &height);
@@ -65,6 +79,7 @@ namespace Graphene {
 		VBO VBO1(vertices, sizeof(vertices));
 		EBO EBO1(indices, sizeof(indices));
 
+
 		VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 9 * sizeof(float), (void*)0);
 		VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 9 * sizeof(float), (void*)3);
 		VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 9 * sizeof(float), (void*)6);
@@ -76,8 +91,11 @@ namespace Graphene {
 		Shader shaderProgram("glyphs.vert", "glyphs.frag");
 
 		setClearColor(GrapheneColorDefaults::ambient_background_1);
+		std::cout << "Check" << std::endl;
+
 		while (!glfwWindowShouldClose(main))
 		{
+
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			VAO1.Bind();

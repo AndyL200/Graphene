@@ -12,10 +12,12 @@
 
 #ifdef _WIN32
 	#ifdef BUILD_DLL
-		#define Graphene_API _declspec(dllexport)
+		#define GRAPHENE_API _declspec(dllexport)
 	#else 
-		#define Graphene_API _declspec(dllimport)
+		#define GRAPHENE_API _declspec(dllimport)
 	#endif
+
+#define GH_PLATFORM_WINDOWS
 
 #define grfy_mmap CreateFileMapping
 #else
