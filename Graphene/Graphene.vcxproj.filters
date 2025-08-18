@@ -51,9 +51,6 @@
     <ClCompile Include="src\GHWindow\GHWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextGeneration.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -499,6 +496,11 @@
     <None Include="dep\include\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="src\glyphs.frag" />
+    <None Include="src\glyphs.vert" />
+    <None Include="src\objects.frag" />
+    <None Include="src\planar.vert" />
+    <None Include="src\planar.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GHWindow\WinWindow\WinWindow.h">
@@ -541,9 +543,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TextGeneration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\VAO.h">
@@ -1735,6 +1734,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dep\include\ft2build.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShaderHead.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

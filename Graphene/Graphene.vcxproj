@@ -427,8 +427,9 @@
     <ClInclude Include="src\Module.h" />
     <ClInclude Include="src\pchgrfy.h" />
     <ClInclude Include="src\Plots.h" />
+    <ClInclude Include="src\render_interface.h" />
     <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\TextGeneration.h" />
+    <ClInclude Include="src\ShaderHead.h" />
     <ClInclude Include="src\VAO.h" />
     <ClInclude Include="src\VBO.h" />
   </ItemGroup>
@@ -572,6 +573,11 @@
     <None Include="dep\include\glm\gtx\vector_angle.inl" />
     <None Include="dep\include\glm\gtx\vector_query.inl" />
     <None Include="dep\include\glm\gtx\wrap.inl" />
+    <None Include="src\glyphs.frag" />
+    <None Include="src\glyphs.vert" />
+    <None Include="src\objects.frag" />
+    <None Include="src\planar.frag" />
+    <None Include="src\planar.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dep\include\glm\detail\glm.cpp" />
@@ -584,7 +590,6 @@
     <ClCompile Include="src\Module.cpp" />
     <ClCompile Include="src\Plots.cpp" />
     <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\TextGeneration.cpp" />
     <ClCompile Include="src\VAO.cpp" />
     <ClCompile Include="src\VBO.cpp" />
   </ItemGroup>

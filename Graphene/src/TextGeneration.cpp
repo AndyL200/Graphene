@@ -11,12 +11,13 @@ Character* loadFont(const char* fontFileName, unsigned int fontSize)
 	}
 
 	FT_Face face;
-	if (FT_New_Face(ft, "fonts/" + *fontFileName, 0, &face))
+	if (FT_New_Face(ft, fontFileName, 0, &face))
 	{
 		std::cout << "ERROR:FREETYPE: Failed to load font";
 		return nullptr;
 	}
-
+	//REQUIRES ALL TEXTURES HAVE 4-BYTE ALIGNMENT
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	//expand later for character sets from other languages
 	FT_Set_Pixel_Sizes(face, 0, fontSize);
 	Character characters[128];
@@ -25,7 +26,7 @@ Character* loadFont(const char* fontFileName, unsigned int fontSize)
 	{
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 		{
-			std::cout << "ERROR: Failed to load glyph" << std::endl;
+			std::cout << "ERROR: Failed to load glyph: " << c << std::endl;
 			continue;
 		}
 
@@ -58,8 +59,7 @@ Character* loadFont(const char* fontFileName, unsigned int fontSize)
 		};
 		characters[c] = tmpc;
 	}
-	//REQUIRES ALL TEXTURES HAVE 4-BYTE ALIGNMENT
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 
@@ -67,61 +67,64 @@ Character* loadFont(const char* fontFileName, unsigned int fontSize)
 }
 
 
-void renderText(Shader& s, std::string text, const char* font, float x, float y, float scale, glm::vec3 color)
+void renderText(Shader& s, std::string text, VAO v, Character* font_chars, float x, float y, float scale, glm::vec3 color)
 {
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	VAO VAO1;
-	VBO VBO1;
-
+	float copyX = x;
 	s.Activate();
+	
+	glDisable(GL_DEPTH_TEST);
+	
 	glUniform3f(glGetUniformLocation(s.ID, "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
+	GLuint textLoc = glGetUniformLocation(s.ID, "text");
 
-	VAO1.Bind();
-
-
-	Character* font_chars = loadFont(font, (int)scale);
+	VBO VBOTXT;
+	v.LinkAttrib(VBOTXT, 0, 4, GL_FLOAT, 4 * sizeof(float), 0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+	
 
 	std::string::const_iterator c;
 	for (c = text.begin(); c != text.end(); c++)
 	{
-		Character ch = font_chars[*c];
+		char care = *c;
+		Character ch = font_chars[(int)*c];
+		if (*c == '\n')
+		{
+			y -= ((ch.Size.y)) * 1.3 * scale;
+			x = copyX;
+		}
+		else {
 
-		//starts at the origin???
-		float xpos = x + ch.Bearing.x * scale;
-		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+			//starts at the origin???
+			float xpos = x + ch.Bearing.x * scale;
+			float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
-		float w = ch.Size.x * scale;
-		float h = ch.Size.y * scale;
+			float w = ch.Size.x * scale;
+			float h = ch.Size.y * scale;
 
-		float vertices[6][4] = {
-			//Coords        //TexCoords
-			{xpos, ypos + h,		0.0f, 0.0f},
-			{xpos, ypos,			0.0f, 1.0f},
-			{xpos + w, ypos,		1.0f, 1.0f},
-			{xpos, ypos + h,		0.0f, 0.0f},
-			{xpos + w, ypos,		1.0f, 1.0f},
-			{xpos + w, ypos + h,	1.0f, 0.0f}
-		};
+			float vertices[6][4] = {
+				//Coords        //TexCoords
+				{xpos, ypos + h,		0.0f, 0.0f},
+				{xpos, ypos,			0.0f, 1.0f},
+				{xpos + w, ypos,		1.0f, 1.0f},
+				{xpos, ypos + h,		0.0f, 0.0f},
+				{xpos + w, ypos,		1.0f, 1.0f},
+				{xpos + w, ypos + h,	1.0f, 0.0f}
+			};
 
-		//render glyph texture over quad
-		VAO1.Bind();
-		VBO1.Bind();
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+			// render glyph texture over quad
+			glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+			// update content of VBO memory
+			VBOTXT.Bind();
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+			// render quad
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			VBOTXT.Unbind();
 
-		//updating content of VBO memory
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		x += (ch.Advance >> 6) * scale;
-		VBO1.Unbind();
+			// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+			x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+		}
 	}
-	VAO1.Unbind();
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);

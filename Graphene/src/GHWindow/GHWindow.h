@@ -1,8 +1,9 @@
 #ifndef GRAPHENE_WINDOW
 #define GRAPHENE_WINDOW
 
-
-#include "TextGeneration.h"
+#include "Core.h"
+#include <pchgrfy.h>
+#include "ShaderHead.h"
 
 
 namespace Graphene {

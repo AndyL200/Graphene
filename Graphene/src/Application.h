@@ -6,19 +6,21 @@
 #include "GHWindow/GHWindow.h"
 
 
+
+
 namespace Graphene {
 
-	namespace GrapheneColorDefaults
-	{
-		struct GrapheneColor {
-			float r, b, g;
+	
+		class GrapheneColor {
+			//different formatting
+		public:
+			float r;
+			float g;
+			float b;
+			GrapheneColor(float red, float green, float blue);
 		};
 
-		constexpr GrapheneColor Grey = { 0.1f, 0.5f, 0.9f };
-		constexpr GrapheneColor ambient_background_1 = {0.1f, 0.7f, 1.0f};
-
-
-	};
+		
 
 
 	class GRAPHENE_API Application {
@@ -26,9 +28,9 @@ namespace Graphene {
 		Application(int argc = 0, char* argv[] = nullptr);
 		//Application();
 
-		void onUpdate() const;
+		void onUpdate();
 
-		bool init(int argc, char* argv[]) const;
+		bool init(int argc, char* argv[]);
 	
 		void GHSetupWindow(Window* Win_Title, uint16_t WinType, Dimensions* label_ptr, int PlotType);
 
@@ -39,7 +41,7 @@ namespace Graphene {
 			int ulx, int uly, SCALAR X_Scale, SCALAR Y_Scale,
 			int X_Auto_Rescale, int Y_Auto_Rescale, SCALAR X_Min,
 			SCALAR X_Max, SCALAR Y_Min, SCALAR Y_Max);
-		void SetVsync();
+		void SetVsync(bool b);
 		Module GHModCreatePlot(const char* theInputFile);
 		void GHModLoadSetup(const char* Title, uint32_t WinType, Dimensions* label_ptr, uint16_t PlotType);
 

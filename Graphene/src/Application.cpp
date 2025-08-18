@@ -1,10 +1,227 @@
 #include "Application.h"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
-extern void renderText(Shader& s, std::string text, const char* font, float x, float y, float scale, glm::vec3 color);
-extern Character* loadFont(const char* fontFileName, unsigned int fontSize);
+#include "render_interface.h"
+
+std::vector<Glyph> loadFont(const char* fontPath, unsigned int fontSize);
+void renderText(Shader& s, std::string text, VAO& v, std::vector<Glyph>& font_chars, float x, float y, float scale, glm::vec3 color);
+
+
+std::vector<Glyph> loadFont(const char* fontPath, unsigned int fontSize)
+{
+	FT_Library ft;
+	if (FT_Init_FreeType(&ft))
+	{
+		std::cout << "Error: could not init";
+		return std::vector<Glyph>();
+	}
+
+	FT_Face face;
+	if (FT_New_Face(ft, fontPath, 0, &face))
+	{
+		std::cout << "ERROR:FREETYPE: Failed to load font";
+		return std::vector<Glyph>();
+	}
+
+	unsigned int texture;
+	glGenTextures(1, (GLuint*)&texture);
+	//REQUIRES ALL TEXTURES HAVE 4-BYTE ALIGNMENT
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	//expand later for character sets from other languages
+	FT_Set_Pixel_Sizes(face, 0, fontSize);
+	std::vector<Glyph> glyphs;
+
+	int padding = 2;
+	int row = 0;
+	int col = padding;
+
+	const int txtWidth = 512;
+	char* textureBuffer = new char[txtWidth * txtWidth];
+
+	for (FT_ULong glyphIdx = 32; glyphIdx < 127; ++glyphIdx)
+	{
+		FT_UInt glyphIndex = FT_Get_Char_Index(face, glyphIdx);
+		FT_Load_Glyph(face, glyphIdx, FT_LOAD_DEFAULT);
+		FT_Error error = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+
+		if (col + face->glyph->bitmap.width + padding >= 512)
+		{
+			col = padding;
+			row += fontSize;
+		}
+
+		for (unsigned int y = 0; y < face->glyph->bitmap.rows; ++y)
+		{
+			for (unsigned int x = 0; x < face->glyph->bitmap.width; ++x)
+			{
+				textureBuffer[(row + y) * txtWidth + col + x] =
+					face->glyph->bitmap.buffer[y * face->glyph->bitmap.pitch + x];
+			}
+		}
+		Glyph g;
+		g.textureID = texture;
+		g.atlasWidth = 512;
+		g.atlasHeight = 512;
+		g.offset = glm::vec2((float)face->glyph->bitmap_left, (float)face->glyph->bitmap_top);
+		g.advance = glm::vec2((float)(face->glyph->advance.x >> 6), (float)(face->glyph->advance.y >> 6));
+		g.txtCoords = glm::vec2(col, row);
+		g.size = glm::vec2(face->glyph->bitmap.width, face->glyph->bitmap.rows);
+
+		col += face->glyph->bitmap.width + padding;
+		glyphs.push_back(g);
+
+		//std::cout << g.textureID << " " << g.atlasWidth << " " << g.offset.x << " " << g.offset.y << " " << g.advance.x << " " << g.advance.y << " " << g.txtCoords.x << " " << g.txtCoords.y << " " << g.size.x << " " << g.size.y << " " << std::endl;
+
+	}
+
+
+
+	//Upload OpenGL texture
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, txtWidth, txtWidth, 0, GL_RED, GL_UNSIGNED_BYTE, (char*)textureBuffer);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	FT_Done_Face(face);
+	FT_Done_FreeType(ft);
+
+
+	return glyphs;
+}
+
+
+void renderText(Shader& s, std::string text, VAO& v, VBO& vb, std::vector<Glyph>& font_chars, float x, float y, float scale, glm::vec3 color)
+{
+	float copyX = x;
+	//hardcoding texture 0 to be for text
+
+	s.Activate();
+	glUniform3f(glGetUniformLocation(s.ID, "textColor"), color.x, color.y, color.z);
+	glUniform1i(glGetUniformLocation(s.ID, "text"), 1);
+	glActiveTexture(GL_TEXTURE1);
+
+	v.Bind();
+
+	Glyph temp = font_chars[0];
+	// render glyph texture over quad
+	glBindTexture(GL_TEXTURE_2D, temp.textureID);
+
+
+	
+
+
+	//error zone
+	VBO VBOTXT;
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+	//first two aren't normalized next two are
+	v.LinkAttrib(VBOTXT, 0, 2, GL_FLOAT, 4 * sizeof(float), 0);
+	//error zone
+	
+	std::string::const_iterator c;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		char care = *c;
+		if (static_cast<int>(care) >= 32 && static_cast<int>(care) < 127)
+		{
+			Glyph g = font_chars[static_cast<int>(care) - 32];
+
+			if (care == '\n')
+			{
+				y -= ((g.size.y)) * scale;
+				x = copyX;
+				continue;
+			}
+
+
+			//starts at the origin???
+			float xpos = x + g.offset.x * scale;
+			float ypos = y - (g.size.y - g.offset.y) * scale;
+
+			float w = g.size.x * scale;
+			float h = g.size.y * scale;
+
+			float tx = g.txtCoords.x / g.atlasWidth;
+			float ty = g.txtCoords.y / g.atlasHeight;
+			float tw = g.size.x / g.atlasWidth;
+			float th = g.size.y / g.atlasHeight;
+
+			float vertices[6][4] = {
+				//Coords        //TexCoords
+				{xpos, ypos + h,		tx, ty},
+				{xpos, ypos,			tx, ty + th},
+				{xpos + w, ypos,		tx + tw, ty + th},
+				{xpos, ypos + h,		tx, ty},
+				{xpos + w, ypos,		tx + tw, ty + th},
+				{xpos + w, ypos + h,	tx + tw, ty}
+			};
+
+			
+			
+			// update content of VBO memory
+			//move out
+			VBOTXT.Bind();
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+			VBOTXT.Unbind();
+
+			// render quad
+			//std::cout << "issuing draw call" << std::endl;
+
+			//error zone
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			//error zone
+			GLenum err;
+
+			while ((err = glGetError()) != GL_NO_ERROR)
+			{
+				std::cerr << "GL Error: " << err << std::endl;
+			}
+			//std::cout << "finished drawing" << std::endl;
+
+			// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+			x += g.advance.x * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+		}
+
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		
+	}
+}
 
 namespace Graphene {
+
+
+	/*struct Character
+	{
+		unsigned int TextureID;
+		glm::ivec2 Size;
+		glm::ivec2 Bearing;
+		unsigned int Advance;
+	};*/
+
+
+	void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+	GrapheneColor::GrapheneColor(float red, float green, float blue)
+	{
+		this->r = red;
+		this->g = green;
+		this->b = blue;
+	}
+	GrapheneColor Grey(45.0f / 255.0f, 51.0f / 255.0f, 41.0f / 255.0f);
+	GrapheneColor ambient_background_1(188.0f / 255.0f, 188.0f / 255.0f, 138.0f / 255.0f);
+
+
+
+	
 
 	Application::Application(int argc, char* argv[]) {
 		if (!init(argc, argv))
@@ -16,111 +233,165 @@ namespace Graphene {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+
+
 		//read logic here
 		main = glfwCreateWindow(1280, 720, "App", NULL, NULL);
+		if (!main)
+		{
+			std::cerr << "Could not make window" << std::endl;
+			glfwTerminate();
+			return;
+		}
 		glfwMakeContextCurrent(main);
+		glfwSetFramebufferSizeCallback(main, framebufferSizeCallback);
 
-		gladLoadGL();
-	};
-
-	void setClearColor(const GrapheneColorDefaults::GrapheneColor& color)
-	{
-		glClearColor(color.r, color.b, color.g, 1.0f);
-	}
-
-
-
-
-	void Application::onUpdate() const {
-		glfwSwapBuffers(main);
-		glfwPollEvents();
-	}
-
-	void Application::GHClose() {
-		glfwDestroyWindow(main);
-		glfwTerminate();
-	}
-
-	GLFWwindow* Application::getWindow()
-	{
-		return main;
-	}
-
-	void Application::GHStart() {
-		std::cout << "Program Start" << std::endl;
-
-
-		int width, height;
-		glfwGetWindowSize(main, &width, &height);
-
-		//set uniform for projection matrix
-		glm::mat4 projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
 
 		
-
-		//top rect
-		GLfloat vertices[] =
-		{
-			//	Coordinates	//	Colors	//	Normals
-			1.0f, 1.0f, 0.0f,  GrapheneColorDefaults::Grey.r, GrapheneColorDefaults::Grey.g, GrapheneColorDefaults::Grey.b, 0.0f, 0.0f, 0.0f,
-			1.0f, 0.9f, 0.0f,  GrapheneColorDefaults::Grey.r, GrapheneColorDefaults::Grey.g, GrapheneColorDefaults::Grey.b, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f,  GrapheneColorDefaults::Grey.r, GrapheneColorDefaults::Grey.g, GrapheneColorDefaults::Grey.b, 0.0f, 0.0f, 0.0f,
-			0.0f, 0.9f, 0.0f,  GrapheneColorDefaults::Grey.r, GrapheneColorDefaults::Grey.g, GrapheneColorDefaults::Grey.b, 0.0f, 0.0f, 0.0f
-
-		};
-		GLuint indices[] =
-		{
-			0, 1, 2,
-			1, 2, 3
-		};
-		VAO VAO1;
-		VAO1.Bind();
-
-		VBO VBO1(vertices, sizeof(vertices));
-		EBO EBO1(indices, sizeof(indices));
-
-
-		VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 9 * sizeof(float), (void*)0);
-		VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 9 * sizeof(float), (void*)3);
-		VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 9 * sizeof(float), (void*)6);
-
-		VAO1.Unbind();
-		VBO1.Unbind();
-		EBO1.Unbind();
-
-		Shader shaderProgram("glyphs.vert", "glyphs.frag");
-
-		setClearColor(GrapheneColorDefaults::ambient_background_1);
-		std::cout << "Check" << std::endl;
-
-		while (!glfwWindowShouldClose(main))
+		if (!gladLoadGL())
 		{
 
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			VAO1.Bind();
-
-			glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
-			renderText(shaderProgram, "Graphene", "UltronRegular-ARwBM.ttf", 0, 0, 40, glm::vec3(0.1f, 0.1f, 0.1f));
-
-
-			onUpdate();
+			std::cerr << "Could not initialize GLAD" << std::endl;
+			glfwTerminate();
+			return;
 		}
 
-		VAO1.Delete();
+
+		int afbw, afbh;
+		glfwGetFramebufferSize(main, &afbw, &afbh);
+		glViewport(0, 0, afbw, afbh);
+		SetVsync(true);
+		
+		//glEnable(GLFW_OPENGL_DEBUG_CONTEXT)
+	};
+
+	static void setClearColor(const GrapheneColor& color)
+	{
+		glClearColor(color.r, color.g, color.b, 1.0f);
+	}
+
+
+
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+void Application::onUpdate() {
+	glfwSwapBuffers(main);
+	glfwPollEvents();
+}
+
+void Application::GHClose() {
+	glfwDestroyWindow(main);
+	glfwTerminate();
+}
+
+GLFWwindow* Application::getWindow()
+{
+	return main;
+}
+
+void Application::GHStart() {
+	std::cout << "Program Start" << std::endl;
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int width, height;
+	glfwGetWindowSize(main, &width, &height);
+
+	//set uniform for projection matrix
+	glm::mat4 projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height);
+
+	//grey.r, grey.g, grey.b
+	//top rect
+	GLfloat vertices[] =
+	{
+		//	Coordinates	//	Colors	//	Normals
+		width, height, 0.0f,			Grey.r, Grey.g, Grey.b,
+		width, height * 0.9f, 0.0f,		Grey.r, Grey.g, Grey.b,
+		0.0f, height, 0.0f,				Grey.r, Grey.g, Grey.b,
+		0.0f, height * 0.9f, 0.0f,		Grey.r, Grey.g, Grey.b,
+
+
+		width, height * 0.1f, 0.0f,		Grey.r, Grey.g, Grey.b,
+		width, 0.0f, 0.0f,				Grey.r, Grey.g, Grey.b,
+		0.0f, height * 0.1f, 0.0f,		Grey.r, Grey.g, Grey.b,
+		0.0f, 0.0f, 0.0f,				Grey.r, Grey.g, Grey.b,
+
+
+	};
+	GLuint indices[] =
+	{
+		0, 1, 2,
+		1, 2, 3,
+		4, 5, 6,
+		5, 6, 7
+	};
+	VAO VAO1;
+	VAO1.Bind();
+
+	VBO VBO1(vertices, sizeof(vertices));
+	EBO EBO1(indices, sizeof(indices));
+
+
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	
+	VAO1.Unbind();
+	VBO1.Unbind();
+	EBO1.Unbind();
+
+	VAO VAOTXT;
+
+	Shader textShader("../Graphene/src/glyphs.vert", "../Graphene/src/glyphs.frag");
+	textShader.Activate();
+	
+	glUniformMatrix4fv(glGetUniformLocation(textShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	
+	setClearColor(ambient_background_1);
+
+	
+	std::vector<Glyph> glpyhs = loadFont("../Graphene/fonts/UltronRegular-ARwBM.ttf", 40);
+
+	
+	Shader objectShader("../Graphene/src/planar.vert", "../Graphene/src/planar.frag");
+	objectShader.Activate();
+	std::cout << glGetUniformLocation(objectShader.ID, "projection") << std::endl;
+	glUniformMatrix4fv(glGetUniformLocation(objectShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+	
+	//while (!glfwWindowShouldClose(main))
+	//{
+
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		VAO1.Bind();
+		objectShader.Activate();
+		
+		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		VAOTXT.Bind();
+		textShader.Activate();
+		//TODO(fix error here)
+		renderText(textShader, "Graphene", VAOTXT, glpyhs, (float)width * 0.5, (float)height * 0.5, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+			onUpdate();
+		//}
+
+		VAO1.Delete();   
 		VBO1.Delete();
+		EBO1.Delete();
 
 	}
 
-	bool Application::init(int argc = 0, char* argv[] = nullptr) const {
+	bool Application::init(int argc = 0, char* argv[] = nullptr) {
 		if (!glfwInit()) {
 			std::cout << "INIT ERROR";
 			return false;
 		}
 		return true;
 	}
-	void Application::SetVsync() {
-		glfwSwapInterval(1);
+	void Application::SetVsync(bool set) {
+		if (set) { glfwSwapInterval(1); }
 	}
 
 
@@ -316,4 +587,7 @@ namespace Graphene {
 		return;
 
 	}
+
+
+	
 };
